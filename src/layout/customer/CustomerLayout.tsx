@@ -1,25 +1,36 @@
-import { Box, Container, Paper } from '@mui/material'
-import { Outlet } from 'react-router-dom'
-import UserNavbar from '../../components/customer/CustomerNavbar'
-import UserFooter from '../../components/customer/CustomerFooter'
+import { Box } from "@mui/material";
+import { Outlet } from "react-router-dom";
+import UserNavbar from "../../components/customer/CustomerNavbar";
+import UserFooter from "../../components/customer/CustomerFooter";
 
 const UserLayout = () => {
   return (
-    <Box>
-        <Container>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        overflowX: "hidden",
+      }}
+    >
+      <UserNavbar />
 
-            <Paper>
-                
-                <UserNavbar/>
-                <Outlet/>
-                <UserFooter/>
+      <Box
+        component="main"
+        sx={{
+          flex: 1,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Outlet />
+      </Box>
 
-            </Paper>
-
-        </Container>
-
+      <UserFooter />
     </Box>
-  )
-}
+  );
+};
 
-export default UserLayout
+export default UserLayout;

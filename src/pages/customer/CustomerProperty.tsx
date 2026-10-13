@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Paper,
@@ -11,1618 +11,672 @@ import {
   Button,
   Box,
   Chip,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  IconButton,
-  Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Divider,
   TablePagination,
-  Avatar,
-  InputAdornment,
   Skeleton,
-  Drawer,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 
 import {
   Visibility,
-  Close,
   LocationOn,
   Bed,
   Bathtub,
   SquareFoot,
-  Refresh,
   AttachMoney,
-  Search,
-  FilterList,
   CheckCircle,
   Home,
-  Sort,
-  EventAvailable,
 } from "@mui/icons-material";
 
 import MainLayout from "../../components/layout/MainLayout";
 
-import {
-  getPublicApproved,
-  getPropertyById,
-  clearSelectedProperty,
-} from "../../features/property/propertySlice";
+import { getPublicApproved } from "../../features/property/propertySlice";
+import { getMyFavorites } from "../../features/favorite/favoriteSlice";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 
-import type {
-  Property,
-  PopulatedUser,
-} from "../../typescript/type/property.types";
+import type { Property } from "../../typescript/type/property.types";
 
-import InquiryModal from "./InquiryModal";
-import BookAppointmentModal from "./BookAppointmentModal";
-import RentalApplicationModal from "./RentalApplicationModal";
-import { AssignmentTurnedIn } from "@mui/icons-material";
-
-// =====================================================
-// OPTIONS
-// =====================================================
-
-const PURPOSES = [
-  { value: "", label: "All Purposes" },
-  { value: "Sale", label: "For Sale" },
-  { value: "Rent", label: "For Rent" },
-];
-
-const PROPERTY_TYPES = [
-  { value: "", label: "All Types" },
-  { value: "Apartment", label: "Apartment" },
-  { value: "House", label: "House" },
-  { value: "Villa", label: "Villa" },
-  { value: "Land", label: "Land" },
-  { value: "Office", label: "Office" },
-  { value: "Shop", label: "Shop" },
-  { value: "Warehouse", label: "Warehouse" },
-];
-
-const FURNISHING = [
-  { value: "", label: "Any" },
-  { value: "Furnished", label: "Furnished" },
-  { value: "Semi-Furnished", label: "Semi-Furnished" },
-  { value: "Unfurnished", label: "Unfurnished" },
-];
-
-const SORT_OPTIONS = [
-  { value: "createdAt-desc", label: "Newest First" },
-  { value: "createdAt-asc", label: "Oldest First" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "area-desc", label: "Largest First" },
-  { value: "bedrooms-desc", label: "Most Bedrooms" },
-];
-
-// =====================================================
-// POPULATED USER CHECK
-// =====================================================
-
-const isPopulatedUser = (
-  val: string | PopulatedUser | null | undefined,
-): val is PopulatedUser => !!val && typeof val === "object" && "name" in val;
-
-// =====================================================
-// PAGE
-// =====================================================
+import FavoriteButton from "./FavoriteButton";
 
 const CustomerProperty: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const theme = useTheme();
-
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-  const { properties, property, pagination, loading } = useAppSelector(
-    (state) => state.property,
+  // Redux state
+  const { properties, pagination, loading } = useAppSelector(
+    (state) => state.property
   );
 
-  // =====================================================
-  // FILTER STATE
-  // =====================================================
+  const { user } = useAppSelector((state) => state.auth);
 
-  const [search, setSearch] = useState<string>("");
+  // Search state
+  
 
-  const [submittedSearch, setSubmittedSearch] = useState<string>("");
-
-  const [purpose, setPurpose] = useState<string>("");
-
-  const [propertyType, setPropertyType] = useState<string>("");
-
-  const [furnishingStatus, setFurnishingStatus] = useState<string>("");
-
-  const [bedrooms, setBedrooms] = useState<string>("");
-
-  const [priceInput, setPriceInput] = useState<[string, string]>(["", ""]);
-
-  const [sort, setSort] = useState<string>("createdAt-desc");
-
-  // =====================================================
-  // PAGINATION
-  // =====================================================
-
+  // Pagination state
   const [page, setPage] = useState<number>(0);
-
   const [rowsPerPage, setRowsPerPage] = useState<number>(12);
 
-  // =====================================================
-  // UI STATE
-  // =====================================================
-
-  const [filterDrawerOpen, setFilterDrawerOpen] = useState<boolean>(false);
-
-  const [viewOpen, setViewOpen] = useState<boolean>(false);
-
-  const [inquiryProperty, setInquiryProperty] = useState<Property | null>(null);
-
-  // ✅ NEW — tracks which property is being booked
-  const [bookingProperty, setBookingProperty] = useState<Property | null>(null);
-
-  const [rentalProperty, setRentalProperty] = useState<Property | null>(null);
-
-  // =====================================================
-  // FETCH PROPERTIES
-  // =====================================================
-
+  // Fetch approved properties
   useEffect(() => {
-    const [sortBy, sortOrder] = sort.split("-");
-
     dispatch(
       getPublicApproved({
         page: page + 1,
         limit: rowsPerPage,
-
-        ...(submittedSearch && {
-          search: submittedSearch,
-        }),
-
-        ...(purpose && {
-          purpose,
-        }),
-
-        ...(propertyType && {
-          propertyType,
-        }),
-
-        ...(furnishingStatus && {
-          furnishingStatus,
-        }),
-
-        ...(bedrooms && {
-          bedrooms,
-        }),
-
-        ...(priceInput[0] && {
-          minprice: priceInput[0],
-        }),
-
-        ...(priceInput[1] && {
-          maxprice: priceInput[1],
-        }),
-
-        sortBy,
-        sortOrder,
-      }),
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      })
     );
-  }, [
-    dispatch,
-    page,
-    rowsPerPage,
-    submittedSearch,
-    purpose,
-    propertyType,
-    furnishingStatus,
-    bedrooms,
-    priceInput,
-    sort,
-  ]);
+  }, [dispatch, page, rowsPerPage]);
 
-  // =====================================================
-  // SEARCH
-  // =====================================================
+  // Fetch customer's favorites
+  useEffect(() => {
+    if (user?.role === "customer") {
+      dispatch(getMyFavorites());
+    }
+  }, [dispatch, user?.role]);
 
-  const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
+  // ✅ FIXED: Navigate to search results with "search" param (not "q")
+  
 
-    setPage(0);
-    setSubmittedSearch(search);
+  // Navigate to property details
+  const handleView = (id: string): void => {
+    navigate(`/user/properties/${id}`);
   };
-
-  // =====================================================
-  // RESET
-  // =====================================================
-
-  const handleReset = (): void => {
-    setSearch("");
-    setSubmittedSearch("");
-
-    setPurpose("");
-    setPropertyType("");
-    setFurnishingStatus("");
-    setBedrooms("");
-
-    setPriceInput(["", ""]);
-
-    setSort("createdAt-desc");
-
-    setPage(0);
-
-    setFilterDrawerOpen(false);
-  };
-
-  // =====================================================
-  // APPLY FILTERS
-  // =====================================================
-
-  const handleApplyFilters = (): void => {
-    setPage(0);
-    setFilterDrawerOpen(false);
-  };
-
-  // =====================================================
-  // VIEW PROPERTY
-  // =====================================================
-
-  const handleView = async (id: string): Promise<void> => {
-    await dispatch(getPropertyById(id));
-
-    setViewOpen(true);
-  };
-
-  // =====================================================
-  // CLOSE PROPERTY
-  // =====================================================
-
-  const closeView = (): void => {
-    setViewOpen(false);
-
-    dispatch(clearSelectedProperty());
-  };
-
-  // =====================================================
-  // ACTIVE FILTER COUNT
-  // =====================================================
-
-  const activeFilterCount =
-    (purpose ? 1 : 0) +
-    (propertyType ? 1 : 0) +
-    (furnishingStatus ? 1 : 0) +
-    (bedrooms ? 1 : 0) +
-    (priceInput[0] || priceInput[1] ? 1 : 0);
-
-  // =====================================================
-  // FILTER FIELDS
-  // =====================================================
-
-  const FilterFields = (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 3,
-      }}
-    >
-      {/* PROPERTY TYPE */}
-
-      <FormControl fullWidth size="small">
-        <InputLabel>Property Type</InputLabel>
-
-        <Select
-          value={propertyType}
-          onChange={(e) => setPropertyType(e.target.value)}
-          label="Property Type"
-        >
-          {PROPERTY_TYPES.map((type) => (
-            <MenuItem key={type.value} value={type.value}>
-              {type.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* PURPOSE */}
-
-      <FormControl fullWidth size="small">
-        <InputLabel>Purpose</InputLabel>
-
-        <Select
-          value={purpose}
-          onChange={(e) => setPurpose(e.target.value)}
-          label="Purpose"
-        >
-          {PURPOSES.map((item) => (
-            <MenuItem key={item.value} value={item.value}>
-              {item.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* FURNISHING */}
-
-      <FormControl fullWidth size="small">
-        <InputLabel>Furnishing</InputLabel>
-
-        <Select
-          value={furnishingStatus}
-          onChange={(e) => setFurnishingStatus(e.target.value)}
-          label="Furnishing"
-        >
-          {FURNISHING.map((item) => (
-            <MenuItem key={item.value} value={item.value}>
-              {item.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* BEDROOMS */}
-
-      <FormControl fullWidth size="small">
-        <InputLabel>Min Bedrooms</InputLabel>
-
-        <Select
-          value={bedrooms}
-          onChange={(e) => setBedrooms(e.target.value)}
-          label="Min Bedrooms"
-        >
-          <MenuItem value="">Any</MenuItem>
-
-          <MenuItem value="1">1+</MenuItem>
-
-          <MenuItem value="2">2+</MenuItem>
-
-          <MenuItem value="3">3+</MenuItem>
-
-          <MenuItem value="4">4+</MenuItem>
-
-          <MenuItem value="5">5+</MenuItem>
-        </Select>
-      </FormControl>
-
-      {/* PRICE */}
-
-      <Box>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            fontWeight: 700,
-            mb: 1,
-          }}
-        >
-          Price Range
-        </Typography>
-
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            mb: 2,
-          }}
-        >
-          <TextField
-            size="small"
-            type="number"
-            label="Min"
-            value={priceInput[0]}
-            onChange={(e) => setPriceInput([e.target.value, priceInput[1]])}
-            fullWidth
-          />
-
-          <Typography variant="body2">—</Typography>
-
-          <TextField
-            size="small"
-            type="number"
-            label="Max"
-            value={priceInput[1]}
-            onChange={(e) => setPriceInput([priceInput[0], e.target.value])}
-            fullWidth
-          />
-        </Box>
-      </Box>
-
-      {/* FILTER BUTTONS */}
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 1,
-        }}
-      >
-        <Button variant="contained" fullWidth onClick={handleApplyFilters}>
-          Apply Filters
-        </Button>
-
-        <Button variant="outlined" fullWidth onClick={handleReset}>
-          Reset All
-        </Button>
-      </Box>
-    </Box>
-  );
-
-  // =====================================================
-  // RENDER
-  // =====================================================
 
   return (
     <MainLayout>
       <Paper
+  sx={{
+    p: { xs: 2, md: 4 },
+    borderRadius: 4,
+    bgcolor: "#ffffff",
+    border: "1px solid #dbe7e4",
+    boxShadow: "0 10px 35px rgba(15, 23, 42, 0.06)",
+  }}
+>
+  {/* HERO BANNER */}
+  <Box
+    sx={{
+      position: "relative",
+      width: "100%",
+      height: { xs: 300, md: 420 },
+      borderRadius: 3,
+      overflow: "hidden",
+      mb: 5,
+      bgcolor: "#0f172a",
+    }}
+  >
+    <Box
+      component="img"
+      src="/Frame1.png"
+      alt="Beautiful house"
+      sx={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",
+        display: "block",
+      }}
+    />
+
+    {/* Dark gradient overlay */}
+    <Box
+      sx={{
+        position: "absolute",
+        inset: 0,
+        background:
+          "linear-gradient(90deg, rgba(15,23,42,0.92) 0%, rgba(15,23,42,0.65) 50%, rgba(15,23,42,0.12) 100%)",
+      }}
+    />
+
+    {/* Hero content */}
+    <Box
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: { xs: "6%", md: "8%" },
+        right: { xs: "6%", md: "30%" },
+        transform: "translateY(-50%)",
+        color: "#ffffff",
+      }}
+    >
+      <Chip
+        label="FIND YOUR PERFECT PLACE"
+        size="small"
         sx={{
-          p: {
-            xs: 2,
-            md: 4,
-          },
-          borderRadius: 3,
+          mb: 2,
+          bgcolor: "rgba(16,185,129,0.18)",
+          color: "#a7f3d0",
+          border: "1px solid rgba(167,243,208,0.45)",
+          fontWeight: 700,
+          letterSpacing: 1,
+        }}
+      />
+
+      <Typography
+        variant="h3"
+        sx={{
+          fontWeight: 800,
+          lineHeight: 1.15,
+          fontSize: { xs: "2rem", sm: "2.6rem", md: "3.5rem" },
+          mb: 2,
+          maxWidth: 650,
         }}
       >
-        {/* =================================================
-            HEADER
-        ================================================= */}
+        Find Your Dream Home
+      </Typography>
 
+      <Typography
+        sx={{
+          color: "#e2e8f0",
+          fontSize: { xs: "0.9rem", md: "1.05rem" },
+          lineHeight: 1.8,
+          maxWidth: 460,
+          mb: 3,
+        }}
+      >
+        Discover thoughtfully selected properties and find a place
+        that perfectly matches your lifestyle.
+      </Typography>
+
+      <Button
+        variant="contained"
+        onClick={() =>
+          document
+            .getElementById("available-properties")
+            ?.scrollIntoView({ behavior: "smooth" })
+        }
+        sx={{
+          bgcolor: "#10b981",
+          color: "#ffffff",
+          px: 3.5,
+          py: 1.3,
+          borderRadius: 2,
+          fontWeight: 700,
+          textTransform: "none",
+          boxShadow: "0 8px 20px rgba(16,185,129,0.25)",
+          "&:hover": {
+            bgcolor: "#059669",
+            transform: "translateY(-2px)",
+          },
+          transition: "all 0.2s ease",
+        }}
+      >
+        Explore Properties
+      </Button>
+    </Box>
+  </Box>
+
+  {/* HEADER */}
+  <Box
+    id="available-properties"
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: { xs: "flex-start", sm: "center" },
+      flexWrap: "wrap",
+      gap: 2,
+      mb: 3,
+      scrollMarginTop: "90px",
+    }}
+  >
+    <Box>
+      <Typography
+        variant="overline"
+        sx={{
+          color: "#0f766e",
+          fontWeight: 800,
+          letterSpacing: 1.5,
+        }}
+      >
+        EXPLORE REAL ESTATE
+      </Typography>
+
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 800,
+          color: "#0f172a",
+          fontSize: { xs: "1.6rem", md: "2rem" },
+          mb: 0.7,
+        }}
+      >
+        Available Properties
+      </Typography>
+
+      <Typography variant="body2" sx={{ color: "#64748b" }}>
+        Browse approved listings and discover your next home.
+      </Typography>
+    </Box>
+
+    <Chip
+      icon={<CheckCircle />}
+      label={`${pagination?.total ?? 0} Approved`}
+      sx={{
+        bgcolor: "#ecfdf5",
+        color: "#047857",
+        border: "1px solid #a7f3d0",
+        fontWeight: 700,
+        px: 1,
+        py: 2.2,
+        "& .MuiChip-icon": { color: "#059669" },
+      }}
+    />
+  </Box>
+
+  <Divider sx={{ mb: 4, borderColor: "#e2e8f0" }} />
+
+  {/* LOADING STATE */}
+  {loading && properties.length === 0 ? (
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 3,
+      }}
+    >
+      {[1, 2, 3, 4, 5, 6].map((item) => (
         <Box
+          key={item}
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-            flexWrap: "wrap",
-            gap: 2,
+            width: {
+              xs: "100%",
+              sm: "calc(50% - 12px)",
+              md: "calc(33.333% - 16px)",
+            },
           }}
         >
-          <Box>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 700,
-              }}
-            >
-              Available Properties
-            </Typography>
-
-            <Typography variant="body2" color="text.secondary">
-              Browse all approved listings
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              flexWrap: "wrap",
-            }}
-          >
-            <Chip
-              icon={<CheckCircle />}
-              label={`${pagination?.total ?? 0} Approved`}
-              color="success"
-              variant="outlined"
-            />
-
-            {isMobile && (
-              <Button
-                variant="outlined"
-                startIcon={<FilterList />}
-                onClick={() => setFilterDrawerOpen(true)}
-              >
-                Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
-              </Button>
-            )}
-          </Box>
+          <Skeleton
+            variant="rounded"
+            height={380}
+            sx={{ borderRadius: 3 }}
+          />
         </Box>
+      ))}
+    </Box>
+  ) : properties.length === 0 ? (
+    /* EMPTY STATE */
+    <Box
+      sx={{
+        textAlign: "center",
+        py: { xs: 7, md: 10 },
+        px: 2,
+        border: "1px dashed #cbd5e1",
+        borderRadius: 3,
+        bgcolor: "#f8fafc",
+      }}
+    >
+      <Box
+        sx={{
+          width: 90,
+          height: 90,
+          borderRadius: "50%",
+          bgcolor: "#ecfdf5",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mx: "auto",
+          mb: 2.5,
+        }}
+      >
+        <Home sx={{ fontSize: 44, color: "#0f766e" }} />
+      </Box>
 
-        <Divider
-          sx={{
-            mb: 3,
-          }}
-        />
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: 700, color: "#0f172a", mb: 1 }}
+      >
+        No Properties Available
+      </Typography>
 
-        {/* =================================================
-            SEARCH + SORT
-        ================================================= */}
-
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            mb: 3,
-            flexWrap: "wrap",
-            alignItems: "center",
-          }}
-        >
+      <Typography variant="body2" sx={{ color: "#64748b" }}>
+        Approved property listings will appear here when available.
+      </Typography>
+    </Box>
+  ) : (
+    <>
+      {/* PROPERTY CARDS */}
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 3,
+        }}
+      >
+        {properties.map((p: Property) => (
           <Box
-            component="form"
-            onSubmit={handleSearch}
-            sx={{
-              flex: 1,
-              minWidth: 260,
-            }}
-          >
-            <TextField
-              placeholder="Search by title..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              size="small"
-              fullWidth
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search fontSize="small" />
-                    </InputAdornment>
-                  ),
-                },
-              }}
-            />
-          </Box>
-
-          <FormControl
-            size="small"
-            sx={{
-              minWidth: 200,
-            }}
-          >
-            <InputLabel>Sort</InputLabel>
-
-            <Select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              label="Sort"
-              startAdornment={
-                <Sort
-                  fontSize="small"
-                  sx={{
-                    mr: 1,
-                  }}
-                />
-              }
-            >
-              {SORT_OPTIONS.map((item) => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="outlined"
-            startIcon={<Refresh />}
-            onClick={handleReset}
-          >
-            Reset
-          </Button>
-        </Box>
-
-        {/* =================================================
-            SIDEBAR + CONTENT
-        ================================================= */}
-
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 3,
-            alignItems: "flex-start",
-          }}
-        >
-          {/* =================================================
-              DESKTOP SIDEBAR
-          ================================================= */}
-
-          {!isMobile && (
-            <Box
-              sx={{
-                width: {
-                  xs: "100%",
-                  md: "calc(25% - 12px)",
-                },
-                flexShrink: 0,
-              }}
-            >
-              <Paper
-                variant="outlined"
-                sx={{
-                  p: 2,
-                  borderRadius: 2,
-                  position: "sticky",
-                  top: 80,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    mb: 2,
-                  }}
-                >
-                  <FilterList />
-
-                  <Typography
-                    variant="subtitle1"
-                    sx={{
-                      fontWeight: 700,
-                    }}
-                  >
-                    Filters
-                  </Typography>
-
-                  {activeFilterCount > 0 && (
-                    <Chip
-                      label={activeFilterCount}
-                      size="small"
-                      color="primary"
-                    />
-                  )}
-                </Box>
-
-                {FilterFields}
-              </Paper>
-            </Box>
-          )}
-
-          {/* =================================================
-              MAIN CONTENT
-          ================================================= */}
-
-          <Box
+            key={p._id}
             sx={{
               width: {
                 xs: "100%",
-                md: isMobile ? "100%" : "calc(75% - 12px)",
+                sm: "calc(50% - 12px)",
+                md: "calc(33.333% - 16px)",
               },
-              minWidth: 0,
+              display: "flex",
             }}
           >
-            {/* =================================================
-                LOADING
-            ================================================= */}
-
-            {loading && properties.length === 0 ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 3,
-                }}
-              >
-                {[1, 2, 3, 4, 5, 6].map((item) => (
-                  <Box
-                    key={item}
-                    sx={{
-                      width: {
-                        xs: "100%",
-                        sm: "calc(50% - 12px)",
-                        md: "calc(33.333% - 16px)",
-                      },
-                    }}
-                  >
-                    <Skeleton
-                      variant="rounded"
-                      height={360}
-                      sx={{
-                        borderRadius: 3,
-                      }}
-                    />
-                  </Box>
-                ))}
-              </Box>
-            ) : properties.length === 0 ? (
-              /* =================================================
-                  EMPTY STATE
-              ================================================= */
-
-              <Box
-                sx={{
-                  textAlign: "center",
-                  py: 10,
-                }}
-              >
-                <Home
+            <Card
+              sx={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                borderRadius: 3,
+                border: "1px solid #e2e8f0",
+                boxShadow: "0 4px 15px rgba(15,23,42,0.04)",
+                transition: "all 0.25s ease",
+                "&:hover": {
+                  transform: "translateY(-6px)",
+                  borderColor: "#a7f3d0",
+                  boxShadow: "0 16px 35px rgba(15,23,42,0.12)",
+                },
+              }}
+            >
+              {/* PROPERTY IMAGE */}
+              <Box sx={{ position: "relative", overflow: "hidden" }}>
+                <CardMedia
+                  component="img"
+                  image={
+                    p.images?.[0]?.image ||
+                    "https://via.placeholder.com/300x200?text=No+Image"
+                  }
+                  alt={p.title}
                   sx={{
-                    fontSize: 80,
-                    color: "text.disabled",
-                    mb: 2,
+                    height: 220,
+                    objectFit: "cover",
+                    transition: "transform 0.4s ease",
+                    "&:hover": { transform: "scale(1.04)" },
                   }}
                 />
 
-                <Typography
-                  variant="h6"
-                  color="text.secondary"
+                {/* Image gradient */}
+                <Box
                   sx={{
-                    mb: 1,
+                    position: "absolute",
+                    inset: "50% 0 0",
+                    background:
+                      "linear-gradient(transparent, rgba(15,23,42,0.25))",
+                    pointerEvents: "none",
+                  }}
+                />
+
+                <Chip
+                  label={p.purpose}
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 12,
+                    left: 12,
+                    bgcolor: p.purpose === "Sale" ? "#0f766e" : "#7c3aed",
+                    color: "#ffffff",
+                    fontWeight: 700,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                  }}
+                />
+
+                <Chip
+                  label={p.propertyType}
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 12,
+                    right: 12,
+                    bgcolor: "rgba(255,255,255,0.95)",
+                    color: "#0f172a",
+                    fontWeight: 700,
+                    maxWidth: "55%",
+                    "& .MuiChip-label": {
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    },
+                  }}
+                />
+
+                {/* FAVORITE BUTTON */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    bottom: 12,
+                    right: 12,
+                    zIndex: 1,
                   }}
                 >
-                  No properties found
+                  <FavoriteButton propertyId={p._id} />
+                </Box>
+              </Box>
+
+              {/* PROPERTY CONTENT */}
+              <CardContent
+                sx={{
+                  flexGrow: 1,
+                  p: 2.5,
+                  "&:last-child": { pb: 2.5 },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 800,
+                    color: "#0f172a",
+                    fontSize: "1.08rem",
+                    mb: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                  title={p.title}
+                >
+                  {p.title}
                 </Typography>
 
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
+                    color: "#64748b",
+                    lineHeight: 1.7,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    minHeight: "3.4em",
                     mb: 2,
                   }}
                 >
-                  Try adjusting your filters or search query.
+                  {p.description}
                 </Typography>
 
-                <Button variant="outlined" onClick={handleReset}>
-                  Clear Filters
-                </Button>
-              </Box>
-            ) : (
-              <>
-                {/* =================================================
-                    PROPERTY CARDS
-                ================================================= */}
-
+                {/* PRICE */}
                 <Box
                   sx={{
                     display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    mb: 2,
+                    p: 1.5,
+                    borderRadius: 2,
+                    bgcolor: "#ecfdf5",
+                  }}
+                >
+                  <AttachMoney sx={{ color: "#047857" }} />
+
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 800,
+                      color: "#047857",
+                      fontSize: "1.2rem",
+                    }}
+                  >
+                    {Number(p.price).toLocaleString("en-IN")}
+                  </Typography>
+
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "#64748b", ml: "auto" }}
+                  >
+                    {p.purpose === "Rent" ? "Rental price" : "Asking price"}
+                  </Typography>
+                </Box>
+
+                {/* PROPERTY DETAILS */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     flexWrap: "wrap",
-                    gap: 3,
-                  }}
-                >
-                  {properties.map((p: Property) => (
-                    <Box
-                      key={p._id}
-                      sx={{
-                        width: {
-                          xs: "100%",
-                          sm: "calc(50% - 12px)",
-                          md: "calc(33.333% - 16px)",
-                        },
-                        display: "flex",
-                      }}
-                    >
-                      <Card
-                        sx={{
-                          borderRadius: 3,
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          flexDirection: "column",
-                          transition: "transform 0.2s, box-shadow 0.2s",
-
-                          "&:hover": {
-                            transform: "translateY(-4px)",
-                            boxShadow: 6,
-                          },
-                        }}
-                      >
-                        {/* =================================================
-                              IMAGE
-                          ================================================= */}
-
-                        <Box
-                          sx={{
-                            position: "relative",
-                          }}
-                        >
-                          <CardMedia
-                            component="img"
-                            sx={{
-                              height: 180,
-                            }}
-                            image={
-                              p.images[0]?.image ||
-                              "https://via.placeholder.com/300x180?text=No+Image"
-                            }
-                            alt={p.title}
-                          />
-
-                          <Chip
-                            label={p.purpose}
-                            size="small"
-                            color={
-                              p.purpose === "Sale" ? "primary" : "secondary"
-                            }
-                            sx={{
-                              position: "absolute",
-                              top: 8,
-                              left: 8,
-                              fontWeight: 600,
-                            }}
-                          />
-
-                          <Chip
-                            label={p.propertyType}
-                            size="small"
-                            variant="filled"
-                            sx={{
-                              position: "absolute",
-                              top: 8,
-                              right: 8,
-                              fontWeight: 600,
-                              bgcolor: "rgba(255,255,255,0.9)",
-                              color: "text.primary",
-                            }}
-                          />
-                        </Box>
-
-                        {/* =================================================
-                              CARD CONTENT
-                          ================================================= */}
-
-                        <CardContent
-                          sx={{
-                            flexGrow: 1,
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            noWrap
-                            sx={{
-                              fontWeight: 700,
-                            }}
-                          >
-                            {p.title}
-                          </Typography>
-
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              mb: 1,
-                            }}
-                          >
-                            {p.description}
-                          </Typography>
-
-                          {/* PRICE */}
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                              mb: 1,
-                            }}
-                          >
-                            <AttachMoney
-                              fontSize="small"
-                              sx={{
-                                color: "success.main",
-                              }}
-                            />
-
-                            <Typography
-                              variant="h6"
-                              color="success.main"
-                              sx={{
-                                fontWeight: 700,
-                              }}
-                            >
-                              {p.price.toLocaleString()}
-                            </Typography>
-                          </Box>
-
-                          {/* STATS */}
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 2,
-                              flexWrap: "wrap",
-                            }}
-                          >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                              }}
-                            >
-                              <Bed fontSize="small" color="action" />
-
-                              <Typography variant="caption">
-                                {p.bedrooms}
-                              </Typography>
-                            </Box>
-
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                              }}
-                            >
-                              <Bathtub fontSize="small" color="action" />
-
-                              <Typography variant="caption">
-                                {p.bathrooms}
-                              </Typography>
-                            </Box>
-
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 0.5,
-                              }}
-                            >
-                              <SquareFoot fontSize="small" color="action" />
-
-                              <Typography variant="caption">
-                                {p.area} sqft
-                              </Typography>
-                            </Box>
-                          </Box>
-
-                          {/* LOCATION */}
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                              mt: 1,
-                            }}
-                          >
-                            <LocationOn fontSize="small" color="action" />
-
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              {p.location.coordinates[1].toFixed(4)},{" "}
-                              {p.location.coordinates[0].toFixed(4)}
-                            </Typography>
-                          </Box>
-                        </CardContent>
-
-                        <Divider />
-
-                        {/* =================================================
-                              ACTIONS
-                        ================================================= */}
-
-                        <CardActions
-                          sx={{
-                            justifyContent: "space-between",
-                            flexWrap: "wrap",
-                            gap: 1,
-                            p: 1.5,
-                          }}
-                        >
-                          <Typography
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{
-                              pl: 0.5,
-                            }}
-                          >
-                            {new Date(p.createdAt).toLocaleDateString()}
-                          </Typography>
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 0.5,
-                            }}
-                          >
-                            {/* VIEW */}
-
-                            <Tooltip title="View details">
-                              <IconButton
-                                size="small"
-                                color="primary"
-                                onClick={() => handleView(p._id)}
-                              >
-                                <Visibility fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-
-                            {/* INQUIRE */}
-
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              color="primary"
-                              onClick={() => setInquiryProperty(p)}
-                              sx={{
-                                textTransform: "none",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Inquire
-                            </Button>
-
-                            {/* ✅ VISIT / BOOK APPOINTMENT */}
-
-                            <Button
-                              size="small"
-                              variant="contained"
-                              color="secondary"
-                              startIcon={<EventAvailable fontSize="small" />}
-                              onClick={() => setBookingProperty(p)}
-                              sx={{
-                                textTransform: "none",
-                                fontWeight: 600,
-                              }}
-                            >
-                              Visit
-                            </Button>
-
-                            {p.purpose === "Rent" && (
-                              <Button
-                                size="small"
-                                variant="contained"
-                                color="success"
-                                startIcon={
-                                  <AssignmentTurnedIn fontSize="small" />
-                                }
-                                onClick={() => setRentalProperty(p)}
-                                sx={{ textTransform: "none", fontWeight: 600 }}
-                              >
-                                Apply
-                              </Button>
-                            )}
-                          </Box>
-                        </CardActions>
-                      </Card>
-                    </Box>
-                  ))}
-                </Box>
-
-                {/* =================================================
-                    PAGINATION
-                ================================================= */}
-
-                {pagination && (
-                  <TablePagination
-                    component="div"
-                    count={pagination.total}
-                    page={page}
-                    onPageChange={(_event, newPage) => setPage(newPage)}
-                    rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={(event) => {
-                      setRowsPerPage(parseInt(event.target.value, 10));
-
-                      setPage(0);
-                    }}
-                    rowsPerPageOptions={[6, 12, 24, 48]}
-                  />
-                )}
-              </>
-            )}
-          </Box>
-        </Box>
-      </Paper>
-
-      {/* =====================================================
-          MOBILE FILTER DRAWER
-      ===================================================== */}
-
-      <Drawer
-        anchor="left"
-        open={filterDrawerOpen}
-        onClose={() => setFilterDrawerOpen(false)}
-      >
-        <Box
-          sx={{
-            width: 320,
-            p: 3,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 700,
-              }}
-            >
-              Filters
-            </Typography>
-
-            <IconButton onClick={() => setFilterDrawerOpen(false)}>
-              <Close />
-            </IconButton>
-          </Box>
-
-          <Divider
-            sx={{
-              mb: 3,
-            }}
-          />
-
-          {FilterFields}
-        </Box>
-      </Drawer>
-
-      {/* =====================================================
-          PROPERTY DETAILS DIALOG
-      ===================================================== */}
-
-      <Dialog open={viewOpen} onClose={closeView} maxWidth="md" fullWidth>
-        <DialogTitle
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          Property Details
-          <IconButton onClick={closeView} size="small">
-            <Close />
-          </IconButton>
-        </DialogTitle>
-
-        <Divider />
-
-        <DialogContent>
-          {loading && !property ? (
-            <Box
-              sx={{
-                textAlign: "center",
-                py: 4,
-              }}
-            >
-              <Skeleton
-                variant="rounded"
-                height={220}
-                sx={{
-                  mb: 2,
-                }}
-              />
-
-              <Skeleton variant="text" width="60%" />
-
-              <Skeleton variant="text" width="40%" />
-            </Box>
-          ) : property ? (
-            <>
-              {property.images.length > 0 && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 1,
+                    gap: 1.5,
                     mb: 2,
-                    overflow: "auto",
                   }}
                 >
-                  {property.images.map((img, index) => (
-                    <img
-                      key={index}
-                      src={img.image}
-                      alt={`${property.title}-${index}`}
-                      style={{
-                        width: 220,
-                        height: 150,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        flexShrink: 0,
-                      }}
-                    />
-                  ))}
-                </Box>
-              )}
-
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                }}
-              >
-                {property.title}
-              </Typography>
-
-              <Box
-                sx={{
-                  mb: 2,
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  {property.description}
-                </Typography>
-              </Box>
-
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 2,
-                  mt: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
+                  {[
+                    {
+                      icon: <Bed fontSize="small" />,
+                      label: `${p.bedrooms} Beds`,
                     },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Type
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.propertyType}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
+                    {
+                      icon: <Bathtub fontSize="small" />,
+                      label: `${p.bathrooms} Baths`,
                     },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Purpose
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.purpose}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
+                    {
+                      icon: <SquareFoot fontSize="small" />,
+                      label: `${p.area} sqft`,
                     },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Price
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    ${property.price.toLocaleString()}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
-                    },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Area
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.area} sqft
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
-                    },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Bedrooms
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.bedrooms}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
-                    },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Bathrooms
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.bathrooms}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
-                    },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Furnishing
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.furnishingStatus}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
-                    },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Status
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 600,
-                    }}
-                  >
-                    {property.status}
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    width: {
-                      xs: "calc(50% - 8px)",
-                      sm: "calc(33.333% - 11px)",
-                    },
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Approval
-                  </Typography>
-
-                  <Box
-                    sx={{
-                      mt: 0.5,
-                    }}
-                  >
-                    <Chip
-                      label="Approved"
-                      icon={<CheckCircle fontSize="small" />}
-                      color="success"
-                      size="small"
-                    />
-                  </Box>
-                </Box>
-
-                {isPopulatedUser(property.owner) && (
-                  <Box
-                    sx={{
-                      width: "100%",
-                    }}
-                  >
-                    <Divider
-                      sx={{
-                        my: 1,
-                      }}
-                    />
-
-                    <Typography variant="caption" color="text.secondary">
-                      Listed By
-                    </Typography>
-
+                  ].map((detail) => (
                     <Box
+                      key={detail.label}
                       sx={{
                         display: "flex",
                         alignItems: "center",
-                        gap: 1.5,
-                        mt: 1,
-                        p: 1.5,
-                        bgcolor: "#f9fafb",
-                        borderRadius: 2,
+                        gap: 0.6,
+                        color: "#64748b",
                       }}
                     >
-                      <Avatar
-                        src={property.owner.image}
-                        sx={{
-                          width: 44,
-                          height: 44,
-                        }}
+                      {detail.icon}
+                      <Typography
+                        variant="caption"
+                        sx={{ fontWeight: 600, color: "#475569" }}
                       >
-                        {property.owner.name?.charAt(0)}
-                      </Avatar>
-
-                      <Box>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                          }}
-                        >
-                          {property.owner.name}
-                        </Typography>
-
-                        <Typography variant="caption" color="text.secondary">
-                          {property.owner.email}
-                        </Typography>
-                      </Box>
+                        {detail.label}
+                      </Typography>
                     </Box>
-                  </Box>
-                )}
-
-                <Box
-                  sx={{
-                    width: "100%",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      mt: 1,
-                    }}
-                  >
-                    <LocationOn fontSize="small" color="action" />
-
-                    <Typography variant="caption">
-                      Coordinates: [{property.location.coordinates.join(", ")}]
-                    </Typography>
-                  </Box>
+                  ))}
                 </Box>
 
-                {property.amenities.length > 0 && (
-                  <Box
+                <Divider sx={{ borderColor: "#edf2f7", mb: 1.5 }} />
+
+                {/* LOCATION */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 0.8,
+                  }}
+                >
+                  <LocationOn
+                    fontSize="small"
+                    sx={{ color: "#0f766e", mt: 0.1 }}
+                  />
+
+                  <Typography
+                    variant="caption"
                     sx={{
-                      width: "100%",
+                      color: "#64748b",
+                      lineHeight: 1.6,
+                      overflowWrap: "anywhere",
                     }}
                   >
-                    <Typography variant="caption" color="text.secondary">
-                      Amenities
-                    </Typography>
+                    {p.location?.coordinates
+                      ? `${p.location.coordinates[1]?.toFixed(4)}, ${p.location.coordinates[0]?.toFixed(4)}`
+                      : "Location unavailable"}
+                  </Typography>
+                </Box>
+              </CardContent>
 
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 1,
-                        flexWrap: "wrap",
-                        mt: 0.5,
-                      }}
-                    >
-                      {property.amenities.map((amenity) => (
-                        <Chip key={amenity} label={amenity} size="small" />
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-              </Box>
-            </>
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              Property not found.
-            </Typography>
-          )}
-        </DialogContent>
+              <Divider sx={{ borderColor: "#edf2f7" }} />
 
-        <DialogActions
+              {/* CARD ACTIONS */}
+              <CardActions
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 1,
+                  p: 2,
+                  bgcolor: "#fcfdfd",
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#94a3b8", fontWeight: 500 }}
+                >
+                  {p.createdAt
+                    ? new Date(p.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "Date unavailable"}
+                </Typography>
+
+                <Button
+                  size="medium"
+                  variant="contained"
+                  startIcon={<Visibility />}
+                  onClick={() => handleView(p._id)}
+                  sx={{
+                    bgcolor: "#0f766e",
+                    color: "#ffffff",
+                    borderRadius: 2,
+                    px: 2,
+                    fontWeight: 700,
+                    textTransform: "none",
+                    boxShadow: "none",
+                    "&:hover": {
+                      bgcolor: "#115e59",
+                      boxShadow: "0 5px 12px rgba(15,118,110,0.2)",
+                    },
+                  }}
+                >
+                  More Details
+                </Button>
+              </CardActions>
+            </Card>
+          </Box>
+        ))}
+      </Box>
+
+      {/* PAGINATION */}
+      {pagination && (
+        <Box
           sx={{
-            justifyContent: "space-between",
-            p: 2,
+            mt: 4,
+            borderTop: "1px solid #e2e8f0",
+            pt: 2,
+            "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows":
+              {
+                color: "#64748b",
+              },
           }}
         >
-          <Button onClick={closeView}>Close</Button>
-
-          {/* ✅ Bonus — Book Visit directly from the details dialog */}
-          {property && (
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<EventAvailable />}
-              onClick={() => {
-                closeView();
-                setBookingProperty(property);
-              }}
-            >
-              Book Visit
-            </Button>
-          )}
-        </DialogActions>
-      </Dialog>
-
-      {/* =====================================================
-          INQUIRY MODAL (moved OUT of .map — rendered once)
-      ===================================================== */}
-
-      {inquiryProperty && (
-        <InquiryModal
-          open={!!inquiryProperty}
-          onClose={() => setInquiryProperty(null)}
-          property={inquiryProperty}
-        />
+          <TablePagination
+            component="div"
+            count={pagination.total}
+            page={page}
+            onPageChange={(_event, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[6, 12, 24, 48]}
+          />
+        </Box>
       )}
-
-      {/* =====================================================
-          ✅ BOOK APPOINTMENT MODAL (new)
-      ===================================================== */}
-
-      {bookingProperty && (
-        <BookAppointmentModal
-          open
-          onClose={() => setBookingProperty(null)}
-          property={bookingProperty}
-        />
-      )}
-
-      {rentalProperty && (
-        <RentalApplicationModal
-          open
-          onClose={() => setRentalProperty(null)}
-          property={rentalProperty}
-        />
-      )}
+    </>
+  )}
+</Paper>
     </MainLayout>
   );
 };

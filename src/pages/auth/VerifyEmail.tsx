@@ -5,11 +5,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useNavigate, useLocation } from "react-router-dom";
 
-import { Box, Paper, Typography, Button } from "@mui/material";
+import { Box, Paper, Typography, Button, Divider } from "@mui/material";
 
 import { LoadingButton } from "@mui/lab";
 
-import { VerifiedUser } from "@mui/icons-material";
+import { MarkEmailReadOutlined, Refresh, VerifiedUser } from "@mui/icons-material";
 
 import FormInput from "../../components/common/FormInput";
 
@@ -84,41 +84,75 @@ const VerifyEmail: React.FC = () => {
     <Box
       sx={{
         minHeight: "100vh",
+        width: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "#f5f5f5",
-        p: 2,
+        px: 2,
+        py: 4,
+        boxSizing: "border-box",
+        background:
+          "radial-gradient(circle at top left, #e0eaff 0%, transparent 35%), radial-gradient(circle at bottom right, #e8e7ff 0%, transparent 35%), #f7f9fc",
       }}
     >
       <Paper
-        elevation={3}
+        elevation={0}
         sx={{
-          p: 4,
-          maxWidth: 450,
           width: "100%",
-          borderRadius: 3,
+          maxWidth: 460,
+          p: {
+            xs: 3,
+            sm: 4.5,
+          },
+          boxSizing: "border-box",
+          borderRadius: 4,
+          backgroundColor: "#ffffff",
+          border: "1px solid #e8edf5",
+          boxShadow: "0 20px 60px rgba(31, 55, 90, 0.10)",
         }}
       >
         {/* Header */}
         <Box
           sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
             textAlign: "center",
-            mb: 3,
+            mb: 4,
           }}
         >
-          <VerifiedUser
+          <Box
             sx={{
-              fontSize: 60,
-              color: "primary.main",
-              mb: 1,
+              width: 76,
+              height: 76,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "24px",
+              background:
+                "linear-gradient(135deg, #e5efff 0%, #edf0ff 100%)",
+              mb: 2.5,
             }}
-          />
+          >
+            <MarkEmailReadOutlined
+              sx={{
+                fontSize: 42,
+                color: "#356df3",
+              }}
+            />
+          </Box>
 
           <Typography
-            variant="h5"
+            variant="h4"
             sx={{
-              fontWeight: 700,
+              fontSize: {
+                xs: 25,
+                sm: 30,
+              },
+              fontWeight: 800,
+              letterSpacing: "-0.8px",
+              color: "#172b4d",
+              mb: 1,
             }}
           >
             Verify Your Email
@@ -127,36 +161,79 @@ const VerifyEmail: React.FC = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "text.secondary",
-              mt: 1,
+              color: "#74829a",
+              lineHeight: 1.8,
+              maxWidth: 310,
             }}
           >
-            Enter the 6-digit OTP sent to your email
+            Enter the 6-digit verification code sent to your email address.
           </Typography>
         </Box>
 
-        {/* Verify Email Form */}
-        <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Form */}
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
           {/* Email */}
-          <FormInput<VerifyEmailFormValues>
-            name="email"
-            control={control}
-            label="Email"
-            type="email"
-            disabled={!!email}
-          />
+          <Box sx={{ mb: 2.5 }}>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#344563",
+                mb: 1,
+              }}
+            >
+              Email Address
+            </Typography>
+
+            <FormInput<VerifyEmailFormValues>
+              name="email"
+              control={control}
+              label="Email"
+              type="email"
+              disabled={!!email}
+            />
+          </Box>
 
           {/* OTP */}
-          <FormInput<VerifyEmailFormValues>
-            name="otp"
-            control={control}
-            label="OTP"
-            slotProps={{
-              htmlInput: {
-                maxLength: 6,
-              },
-            }}
-          />
+          <Box sx={{ mb: 3 }}>
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: "#344563",
+                mb: 1,
+              }}
+            >
+              Verification Code
+            </Typography>
+
+            <FormInput<VerifyEmailFormValues>
+              name="otp"
+              control={control}
+              label="Enter 6-digit OTP"
+              slotProps={{
+                htmlInput: {
+                  maxLength: 6,
+                  inputMode: "numeric",
+                },
+              }}
+            />
+
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                mt: 1,
+                color: "#8a96aa",
+              }}
+            >
+              Please enter the 6-digit code to continue.
+            </Typography>
+          </Box>
 
           {/* Verify Button */}
           <LoadingButton
@@ -165,14 +242,42 @@ const VerifyEmail: React.FC = () => {
             variant="contained"
             size="large"
             loading={loading}
+            startIcon={<VerifiedUser />}
             sx={{
-              py: 1.5,
-              mb: 2,
+              py: 1.6,
+              borderRadius: 2.5,
+              textTransform: "none",
+              fontSize: 16,
+              fontWeight: 700,
+              background:
+                "linear-gradient(135deg, #3478f6 0%, #5145e5 100%)",
+              boxShadow: "0 8px 20px rgba(59, 102, 240, 0.22)",
+              transition: "all 0.25s ease",
+              "&:hover": {
+                background:
+                  "linear-gradient(135deg, #2563eb 0%, #4338ca 100%)",
+                boxShadow: "0 10px 25px rgba(59, 102, 240, 0.3)",
+                transform: "translateY(-1px)",
+              },
             }}
           >
             Verify Email
           </LoadingButton>
-        </form>
+        </Box>
+
+        {/* Divider */}
+        <Divider
+          sx={{
+            my: 3,
+            color: "#9aa6b8",
+            fontSize: 12,
+            "&::before, &::after": {
+              borderColor: "#e8edf5",
+            },
+          }}
+        >
+          OR
+        </Divider>
 
         {/* Resend OTP */}
         <Box
@@ -183,17 +288,53 @@ const VerifyEmail: React.FC = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "text.secondary",
-              mb: 1,
+              color: "#74829a",
+              mb: 1.5,
             }}
           >
-            Didn't receive the OTP?
+            Didn't receive the verification code?
           </Typography>
 
-          <Button variant="text" onClick={handleResendOTP}>
+          <Button
+            variant="text"
+            onClick={handleResendOTP}
+            startIcon={<Refresh />}
+            sx={{
+              px: 2.5,
+              py: 1,
+              borderRadius: 2,
+              textTransform: "none",
+              fontWeight: 700,
+              color: "#356df3",
+              backgroundColor: "#f0f5ff",
+              "&:hover": {
+                backgroundColor: "#e3ecff",
+              },
+            }}
+          >
             Resend OTP
           </Button>
         </Box>
+
+        {/* Footer */}
+        <Typography
+          variant="caption"
+          sx={{
+            display: "block",
+            textAlign: "center",
+            mt: 4,
+            color: "#9aa6b8",
+          }}
+        >
+          <VerifiedUser
+            sx={{
+              fontSize: 14,
+              verticalAlign: "middle",
+              mr: 0.5,
+            }}
+          />
+          Your account security matters to us.
+        </Typography>
       </Paper>
     </Box>
   );

@@ -15,6 +15,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import ListIcon from "@mui/icons-material/List";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import RateReviewIcon from '@mui/icons-material/RateReview'
 
 import { NavLink } from "react-router-dom";
 
@@ -47,12 +49,6 @@ const WriterSidebar = () => {
       path: "/admin/properties",
       icon: <ListIcon />,
     },
-
-    {
-      title: "My Profile",
-      path: "/admin/profile",
-      icon: <PersonIcon />,
-    },
     {
       title: "Inquiries",
       path: "/admin/inquiries",
@@ -67,7 +63,24 @@ const WriterSidebar = () => {
       title:"Admin Lease",
       path:"/admin/AllLeases",
       icon:<HandshakeIcon/>
-    }
+    },
+    {
+      title:"Sale-Transactions",
+      path:"/admin/sale-transactions",
+      icon:<ReceiptLongIcon/>
+    },
+
+    {
+      title:"All Review",
+      path:"/admin/allreview",
+      icon:<RateReviewIcon/>
+    },
+
+    {
+      title: "My Profile",
+      path: "/admin/profile",
+      icon: <PersonIcon />,
+    },
   ];
 
   return (

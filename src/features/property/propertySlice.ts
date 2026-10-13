@@ -208,6 +208,21 @@ export const getPublicApproved = createAsyncThunk<
   }
 });
 
+export const getOwnerProperties = createAsyncThunk<
+  GetAllPropertiesResponse,
+  void,
+  { rejectValue: string }
+>("property/getOwnerProperties", async (_, { rejectWithValue }) => {
+  try {
+    return await propertyService.getOwnerProperties();
+  } catch (error: unknown) {
+    const err = error as { response?: { data?: { message?: string } } };
+    return rejectWithValue(
+      err.response?.data?.message || "Failed to fetch owner properties",
+    );
+  }
+});
+
 // =====================================================
 // SLICE
 // =====================================================
@@ -409,6 +424,18 @@ const propertySlice = createSlice({
       .addCase(getPublicApproved.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? null;
+        toast.error(action.payload ?? "Failed to fetch properties");
+      })
+
+      .addCase(getOwnerProperties.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getOwnerProperties.fulfilled, (state, action) => {
+        state.loading = false;
+        state.properties = action.payload.data ?? [];
+      })
+      .addCase(getOwnerProperties.rejected, (state, action) => {
+        state.loading = false;
         toast.error(action.payload ?? "Failed to fetch properties");
       });
   },

@@ -14,6 +14,9 @@ import ChecklistIcon from "@mui/icons-material/Checklist";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import HomeIcon from '@mui/icons-material/Home'
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import RateReviewIcon from '@mui/icons-material/RateReview'
 
 import { NavLink } from "react-router-dom";
 
@@ -55,7 +58,23 @@ const WriterSidebar = () => {
       title:"Agent Lease",
       path:"/agent/leases",
       icon:<HandshakeIcon/>
+    },
+    {
+      title:"Sale-Offers",
+      path:"/agent/sale-offers",
+      icon:<LocalOfferIcon/>
+    },
+    {
+      title:"Sale-Transactions",
+      path:"/agent/sale-transactions",
+      icon:<ReceiptLongIcon/>
+    },
+    {
+      title:"Agent Review",
+      path:"/agent/reviewmanage",
+      icon:<RateReviewIcon/>
     }
+
   ];
 
   return (

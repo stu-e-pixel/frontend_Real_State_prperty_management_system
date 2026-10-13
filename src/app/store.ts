@@ -8,6 +8,10 @@ import inquiryReducer from "../features/inquiry/inquirySlice";
 import appointmentReducer from "../features/appointment/appointmentSlice";
 import rentalReducer from "../features/rental/rentalSlice";
 import leaseReducer from "../features/lease/leaseSlice";
+import saleOfferReducer from "../features/saleOffer/saleOfferSlice";
+import saleTransactionReducer from "../features/saleTransaction/saleTransactionSlice";
+import favoriteReducer from "../features/favorite/favoriteSlice";
+import reviewReducer from "../features/review/reviewSlice";
 
 
 export const store = configureStore({
@@ -20,7 +24,11 @@ export const store = configureStore({
     inquiry:inquiryReducer,
     appointment: appointmentReducer,
     rental: rentalReducer,
-    lease: leaseReducer
+    lease: leaseReducer,
+    saleOffer: saleOfferReducer,
+    saleTransaction: saleTransactionReducer,
+    favorite: favoriteReducer,
+    review: reviewReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

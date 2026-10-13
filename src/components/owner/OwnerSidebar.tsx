@@ -9,14 +9,16 @@ import {
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import ListIcon from '@mui/icons-material/List';
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ListIcon from "@mui/icons-material/List";
 import CreateIcon from "@mui/icons-material/Create";
 import AddTaskIcon from "@mui/icons-material/AddTask";
-import HomeIcon from '@mui/icons-material/Home';
-import HandshakeIcon from '@mui/icons-material/Handshake';
-
+import HomeIcon from "@mui/icons-material/Home";
+import HandshakeIcon from "@mui/icons-material/Handshake";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import RateReviewIcon from '@mui/icons-material/RateReview'
 
 import { NavLink } from "react-router-dom";
 
@@ -27,47 +29,61 @@ const WriterSidebar = () => {
       path: "/owner/dashboard",
       icon: <DashboardIcon />,
     },
-    
-    
+
     {
       title: "Create Property",
       path: "/owner/properties/create",
       icon: <CreateIcon />,
     },
     {
-      title:"Property List",
-      path:"/owner/properties",
-      icon:<FilterListIcon/>
+      title: "Property List",
+      path: "/owner/properties",
+      icon: <FilterListIcon />,
     },
     {
-      title:"Agent List",
-      path:"/admin/agents",
-      icon:<ListIcon/>
+      title: "Agent List",
+      path: "/admin/agents",
+      icon: <ListIcon />,
     },
 
     {
-      title:"Appointment",
-      path:"/owner/appointments",
-      icon:<CalendarMonthIcon/>
+      title: "Appointment",
+      path: "/owner/appointments",
+      icon: <CalendarMonthIcon />,
     },
     {
-      title:"Inquiries",
-      path:"/owner/inquiries",
-      icon:<AddTaskIcon/>
+      title: "Inquiries",
+      path: "/owner/inquiries",
+      icon: <AddTaskIcon />,
     },
 
     {
-      title:"Owner Rentals",
-      path:"/owner/rentals",
-      icon:<HomeIcon/>
+      title: "Owner Rentals",
+      path: "/owner/rentals",
+      icon: <HomeIcon />,
     },
 
     {
-      title:"Owner Lease",
-      path:"/owner/leases",
-      icon:<HandshakeIcon/>
+      title: "Owner Lease",
+      path: "/owner/leases",
+      icon: <HandshakeIcon />,
     },
 
+    {
+      title: "Sale-Offers",
+      path: "/owner/sale-offers",
+      icon: <LocalOfferIcon />,
+    },
+    {
+      title:"Sale-Transactions",
+      path:"/owner/sale-transactions",
+      icon:<ReceiptLongIcon/>
+    },
+    {
+      title:"Owner Review",
+      path:"/owner/reviewmanage",
+      icon:<RateReviewIcon/>
+    },
 
     {
       title: "My Profile",
@@ -87,7 +103,6 @@ const WriterSidebar = () => {
         backgroundColor: "#ffffff",
       }}
     >
-
       <Divider />
       <List
         sx={{

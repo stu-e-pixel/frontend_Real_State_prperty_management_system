@@ -186,6 +186,13 @@ getPublicApproved: async (params: {
   return response.data;
 },
 
+getOwnerProperties: async (): Promise<GetAllPropertiesResponse> => {
+  const response = await api.get<GetAllPropertiesResponse>(
+    "/v2/api/owner/my-properties"
+  );
+  return response.data;
+},
+
 };
 
 export default propertyService;

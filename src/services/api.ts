@@ -32,10 +32,10 @@ api.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case 401:
-          if (!window.location.pathname.includes("/v1/api/login")) {
+          if (!window.location.pathname.includes("/")) {
             tokenStorage.clearAll();
             toast.error("Session expired. Please login again.");
-            window.location.href = "/v1/api/login";
+            window.location.href = "/";
           }
           break;
         case 403:

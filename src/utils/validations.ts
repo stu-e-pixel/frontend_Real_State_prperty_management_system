@@ -29,6 +29,10 @@ import type {
   CancelFormValues,
 } from "../typescript/type/appointment.types";
 
+  import type {
+  UpdateTransactionFormValues,
+} from "../typescript/type/saleTransaction.types";
+
 import type {
   RentalApplicationFormValues,
   RentalActionFormValues,
@@ -39,6 +43,16 @@ import type {
   UpdateLeaseFormValues,
   TerminateLeaseFormValues,
 } from "../typescript/type/lease.types";
+
+  import type {
+  SaleOfferFormValues,
+  RespondSaleOfferFormValues,
+} from "../typescript/type/saleOffer.types";
+
+ import type {
+  ReviewFormValues,
+  ReviewActionFormValues,
+} from "../typescript/type/review.types";
 
 const phoneRegex = /^[0-9]{10,15}$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/;
@@ -666,4 +680,117 @@ export const terminateLeaseSchema: yup.ObjectSchema<TerminateLeaseFormValues> =
       .min(3, "Reason must be at least 3 characters")
       .max(1000, "Reason too long")
       .required("Termination reason is required"),
+  });
+
+
+
+export const saleOfferSchema: yup.ObjectSchema<SaleOfferFormValues> =
+  yup.object({
+    offerPrice: yup
+      .number()
+      .typeError("Offer price must be a number")
+      .positive("Offer price must be greater than 0")
+      .required("Offer price is required"),
+
+    message: yup
+      .string()
+      .trim()
+      .max(2000, "Message is too long")
+      .default(""),
+  });
+
+export const respondSaleOfferSchema: yup.ObjectSchema<RespondSaleOfferFormValues> =
+  yup.object({
+    action: yup
+      .string()
+      .oneOf(["accept", "reject", "counter"], "Invalid action")
+      .required("Action is required") as yup.StringSchema<RespondSaleOfferFormValues["action"]>,
+
+    counterOfferPrice: yup
+      .number()
+      .typeError("Counter offer price must be a number")
+      .when("action", {
+        is: "counter",
+        then: (schema) =>
+          schema
+            .positive("Counter offer must be greater than 0")
+            .required("Counter offer price is required"),
+        otherwise: (schema) => schema.default(0),
+      }),
+
+    message: yup
+      .string()
+      .trim()
+      .max(2000, "Message is too long")
+      .default(""),
+  });
+
+
+
+export const updateTransactionSchema: yup.ObjectSchema<UpdateTransactionFormValues> =
+  yup.object({
+    transactionStatus: yup
+      .string()
+      .oneOf(
+        ["initiated", "agreement_signed", "payment_pending", "completed", "cancelled"],
+        "Invalid transaction status"
+      )
+      .required("Status is required") as yup.StringSchema<UpdateTransactionFormValues["transactionStatus"]>,
+
+    paymentStatus: yup
+      .string()
+      .oneOf(["unpaid", "partial", "paid"], "Invalid payment status")
+      .required("Payment status is required") as yup.StringSchema<UpdateTransactionFormValues["paymentStatus"]>,
+
+    amountPaid: yup
+      .number()
+      .typeError("Amount paid must be a number")
+      .min(0, "Amount cannot be negative")
+      .required("Amount paid is required"),
+
+    notes: yup
+      .string()
+      .trim()
+      .max(2000, "Notes are too long")
+      .default(""),
+  });
+
+ 
+
+export const reviewSchema: yup.ObjectSchema<ReviewFormValues> = yup.object({
+  rating: yup
+    .number()
+    .typeError("Rating must be a number")
+    .integer("Rating must be a whole number")
+    .min(1, "Rating must be at least 1")
+    .max(5, "Rating cannot exceed 5")
+    .required("Rating is required"),
+
+  comment: yup
+    .string()
+    .trim()
+    .min(3, "Comment must be at least 3 characters")
+    .max(2000, "Comment is too long")
+    .required("Comment is required"),
+});
+
+export const reviewActionSchema: yup.ObjectSchema<ReviewActionFormValues> =
+  yup.object({
+    action: yup
+      .string()
+      .oneOf(["approve", "reject"], "Invalid action")
+      .required("Action is required") as yup.StringSchema<ReviewActionFormValues["action"]>,
+
+    reason: yup
+      .string()
+      .trim()
+      .max(1000, "Reason is too long")
+      .when("action", {
+        is: "reject",
+        then: (schema) =>
+          schema
+            .min(3, "Rejection reason must be at least 3 characters")
+            .required("Reason is required when rejecting"),
+        otherwise: (schema) => schema.default(""),
+      }),
   });
