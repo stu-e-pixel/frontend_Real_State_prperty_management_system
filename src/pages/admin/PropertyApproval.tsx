@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
@@ -55,10 +54,7 @@ import {
   clearSelectedProperty,
 } from "../../features/property/propertySlice";
 
-import {
-  useAppDispatch,
-  useAppSelector,
-} from "../../hooks/useAppDispatch";
+import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 
 import type {
   Property,
@@ -75,19 +71,15 @@ const TABS: { value: TabValue; label: string }[] = [
 ];
 
 const isPopulatedUser = (
-  val: string | PopulatedUser | null | undefined
-): val is PopulatedUser =>
-  !!val && typeof val === "object" && "name" in val;
+  val: string | PopulatedUser | null | undefined,
+): val is PopulatedUser => !!val && typeof val === "object" && "name" in val;
 
 const PropertyApproval: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const {
-    properties,
-    property,
-    pagination,
-    loading,
-  } = useAppSelector((state) => state.property);
+  const { properties, property, pagination, loading } = useAppSelector(
+    (state) => state.property,
+  );
 
   // ------------------------------------------------
   // State
@@ -100,14 +92,11 @@ const PropertyApproval: React.FC = () => {
 
   const [viewOpen, setViewOpen] = useState<boolean>(false);
 
-  const [deleteOpen, setDeleteOpen] =
-    useState<boolean>(false);
+  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
 
-  const [deleteTarget, setDeleteTarget] =
-    useState<Property | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Property | null>(null);
 
-  const [permanentDelete, setPermanentDelete] =
-    useState<boolean>(false);
+  const [permanentDelete, setPermanentDelete] = useState<boolean>(false);
 
   // ------------------------------------------------
   // Fetch properties
@@ -121,7 +110,7 @@ const PropertyApproval: React.FC = () => {
         ...(search.trim() && {
           propertyTitle: search.trim(),
         }),
-      })
+      }),
     );
   }, [dispatch, page, rowsPerPage, search]);
 
@@ -133,9 +122,7 @@ const PropertyApproval: React.FC = () => {
   // Search
   // ------------------------------------------------
 
-  const handleSearch = (
-    e: FormEvent<HTMLFormElement>
-  ): void => {
+  const handleSearch = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
     // Fetch will happen automatically because page changes.
@@ -152,9 +139,7 @@ const PropertyApproval: React.FC = () => {
     }
   };
 
-  const handleView = async (
-    id: string
-  ): Promise<void> => {
+  const handleView = async (id: string): Promise<void> => {
     await dispatch(getPropertyById(id));
     setViewOpen(true);
   };
@@ -164,10 +149,7 @@ const PropertyApproval: React.FC = () => {
     dispatch(clearSelectedProperty());
   };
 
-  const openDelete = (
-    p: Property,
-    permanent = false
-  ): void => {
+  const openDelete = (p: Property, permanent = false): void => {
     setDeleteTarget(p);
     setPermanentDelete(permanent);
     setDeleteOpen(true);
@@ -177,13 +159,9 @@ const PropertyApproval: React.FC = () => {
     if (!deleteTarget) return;
 
     if (permanentDelete) {
-      dispatch(
-        permanentDeleteProperty(deleteTarget._id)
-      );
+      dispatch(permanentDeleteProperty(deleteTarget._id));
     } else {
-      dispatch(
-        softDeleteProperty(deleteTarget._id)
-      );
+      dispatch(softDeleteProperty(deleteTarget._id));
     }
 
     setDeleteOpen(false);
@@ -201,17 +179,11 @@ const PropertyApproval: React.FC = () => {
   });
 
   const counts = {
-    Pending: properties.filter(
-      (p) => p.approvalStatus === "Pending"
-    ).length,
+    Pending: properties.filter((p) => p.approvalStatus === "Pending").length,
 
-    Approved: properties.filter(
-      (p) => p.approvalStatus === "Approved"
-    ).length,
+    Approved: properties.filter((p) => p.approvalStatus === "Approved").length,
 
-    rejected: properties.filter(
-      (p) => p.approvalStatus === "rejected"
-    ).length,
+    rejected: properties.filter((p) => p.approvalStatus === "rejected").length,
   };
 
   // ------------------------------------------------
@@ -241,18 +213,10 @@ const PropertyApproval: React.FC = () => {
           }}
         >
           <Box>
-            <Typography
-              
-            >
-              Property Approvals
-            </Typography>
+            <Typography>Property Approvals</Typography>
 
-            <Typography
-              variant="body2"
-              color="text.secondary"
-            >
-              Review, approve, or remove property
-              listings
+            <Typography variant="body2" color="text.secondary">
+              Review, approve, or remove property listings
             </Typography>
           </Box>
 
@@ -299,11 +263,7 @@ const PropertyApproval: React.FC = () => {
           sx={{ mb: 2 }}
         >
           {TABS.map((item) => (
-            <Tab
-              key={item.value}
-              value={item.value}
-              label={item.label}
-            />
+            <Tab key={item.value} value={item.value} label={item.label} />
           ))}
         </Tabs>
 
@@ -319,16 +279,11 @@ const PropertyApproval: React.FC = () => {
             flexWrap: "wrap",
           }}
         >
-          <Box
-            component="form"
-            onSubmit={handleSearch}
-          >
+          <Box component="form" onSubmit={handleSearch}>
             <TextField
               placeholder="Search by title..."
               value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
+              onChange={(e) => setSearch(e.target.value)}
               size="small"
               sx={{
                 minWidth: 280,
@@ -358,15 +313,8 @@ const PropertyApproval: React.FC = () => {
               py: 6,
             }}
           >
-            <Typography
-              variant="body1"
-              color="text.secondary"
-            >
-              No{" "}
-              {tab !== "all"
-                ? tab.toLowerCase()
-                : ""}{" "}
-              properties found.
+            <Typography variant="body1" color="text.secondary">
+              No {tab !== "all" ? tab.toLowerCase() : ""} properties found.
             </Typography>
           </Box>
         ) : (
@@ -420,10 +368,9 @@ const PropertyApproval: React.FC = () => {
                       color={
                         p.approvalStatus === "Approved"
                           ? "success"
-                          : p.approvalStatus ===
-                            "rejected"
-                          ? "error"
-                          : "warning"
+                          : p.approvalStatus === "rejected"
+                            ? "error"
+                            : "warning"
                       }
                       sx={{
                         position: "absolute",
@@ -436,11 +383,7 @@ const PropertyApproval: React.FC = () => {
                     <Chip
                       label={p.purpose}
                       size="small"
-                      color={
-                        p.purpose === "Sale"
-                          ? "primary"
-                          : "secondary"
-                      }
+                      color={p.purpose === "Sale" ? "primary" : "secondary"}
                       sx={{
                         position: "absolute",
                         top: 8,
@@ -457,11 +400,7 @@ const PropertyApproval: React.FC = () => {
                       flexGrow: 1,
                     }}
                   >
-                    <Typography
-                      variant="h6"
-                      fontWeight={700}
-                      noWrap
-                    >
+                    <Typography variant="h6" sx={{ fontWeight: 700 }} noWrap>
                       {p.title}
                     </Typography>
 
@@ -485,9 +424,9 @@ const PropertyApproval: React.FC = () => {
                     <Stack
                       direction="row"
                       spacing={1}
-                      alignItems="center"
                       sx={{
                         mb: 1,
+                        alignItems: "center",
                       }}
                     >
                       <AttachMoney
@@ -500,7 +439,7 @@ const PropertyApproval: React.FC = () => {
                       <Typography
                         variant="h6"
                         color="success.main"
-                        fontWeight={700}
+                        sx={{ fontWeight: 700 }}
                       >
                         {p.price.toLocaleString()}
                       </Typography>
@@ -523,14 +462,9 @@ const PropertyApproval: React.FC = () => {
                           gap: 0.5,
                         }}
                       >
-                        <Bed
-                          fontSize="small"
-                          color="action"
-                        />
+                        <Bed fontSize="small" color="action" />
 
-                        <Typography variant="caption">
-                          {p.bedrooms}
-                        </Typography>
+                        <Typography variant="caption">{p.bedrooms}</Typography>
                       </Box>
 
                       <Box
@@ -540,14 +474,9 @@ const PropertyApproval: React.FC = () => {
                           gap: 0.5,
                         }}
                       >
-                        <Bathtub
-                          fontSize="small"
-                          color="action"
-                        />
+                        <Bathtub fontSize="small" color="action" />
 
-                        <Typography variant="caption">
-                          {p.bathrooms}
-                        </Typography>
+                        <Typography variant="caption">{p.bathrooms}</Typography>
                       </Box>
 
                       <Box
@@ -557,14 +486,9 @@ const PropertyApproval: React.FC = () => {
                           gap: 0.5,
                         }}
                       >
-                        <SquareFoot
-                          fontSize="small"
-                          color="action"
-                        />
+                        <SquareFoot fontSize="small" color="action" />
 
-                        <Typography variant="caption">
-                          {p.area} sqft
-                        </Typography>
+                        <Typography variant="caption">{p.area} sqft</Typography>
                       </Box>
                     </Box>
 
@@ -596,14 +520,14 @@ const PropertyApproval: React.FC = () => {
                           <Typography
                             variant="caption"
                             color="text.secondary"
-                            display="block"
+                            sx={{ display: "block" }}
                           >
                             Owner
                           </Typography>
 
                           <Typography
                             variant="caption"
-                            fontWeight={600}
+                            sx={{ fontWeight: 700 }}
                           >
                             {p.owner.name}
                           </Typography>
@@ -622,8 +546,7 @@ const PropertyApproval: React.FC = () => {
                         }}
                       >
                         <Typography variant="caption">
-                          <b>Rejected:</b>{" "}
-                          {p.rejectionReason}
+                          <b>Rejected:</b> {p.rejectionReason}
                         </Typography>
                       </Alert>
                     )}
@@ -635,8 +558,7 @@ const PropertyApproval: React.FC = () => {
 
                   <CardActions
                     sx={{
-                      justifyContent:
-                        "space-between",
+                      justifyContent: "space-between",
                     }}
                   >
                     <Box>
@@ -644,9 +566,7 @@ const PropertyApproval: React.FC = () => {
                         <IconButton
                           size="small"
                           color="primary"
-                          onClick={() =>
-                            handleView(p._id)
-                          }
+                          onClick={() => handleView(p._id)}
                         >
                           <Visibility fontSize="small" />
                         </IconButton>
@@ -656,9 +576,7 @@ const PropertyApproval: React.FC = () => {
                         <IconButton
                           size="small"
                           color="warning"
-                          onClick={() =>
-                            openDelete(p, false)
-                          }
+                          onClick={() => openDelete(p, false)}
                         >
                           <Delete fontSize="small" />
                         </IconButton>
@@ -668,24 +586,19 @@ const PropertyApproval: React.FC = () => {
                         <IconButton
                           size="small"
                           color="error"
-                          onClick={() =>
-                            openDelete(p, true)
-                          }
+                          onClick={() => openDelete(p, true)}
                         >
                           <DeleteForever fontSize="small" />
                         </IconButton>
                       </Tooltip>
                     </Box>
 
-                    {p.approvalStatus ===
-                      "Pending" && (
+                    {p.approvalStatus === "Pending" && (
                       <Tooltip title="Approve">
                         <IconButton
                           size="small"
                           color="success"
-                          onClick={() =>
-                            handleApprove(p._id)
-                          }
+                          onClick={() => handleApprove(p._id)}
                         >
                           <CheckCircle fontSize="small" />
                         </IconButton>
@@ -707,14 +620,10 @@ const PropertyApproval: React.FC = () => {
             component="div"
             count={pagination.total}
             page={page}
-            onPageChange={(_event, newPage) =>
-              setPage(newPage)
-            }
+            onPageChange={(_event, newPage) => setPage(newPage)}
             rowsPerPage={rowsPerPage}
             onRowsPerPageChange={(event) => {
-              setRowsPerPage(
-                parseInt(event.target.value, 10)
-              );
+              setRowsPerPage(parseInt(event.target.value, 10));
               setPage(0);
             }}
             rowsPerPageOptions={[6, 9, 12, 24]}
@@ -726,12 +635,7 @@ const PropertyApproval: React.FC = () => {
           VIEW DIALOG
       ===================================================== */}
 
-      <Dialog
-        open={viewOpen}
-        onClose={closeView}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={viewOpen} onClose={closeView} maxWidth="md" fullWidth>
         <DialogTitle
           sx={{
             display: "flex",
@@ -740,11 +644,7 @@ const PropertyApproval: React.FC = () => {
           }}
         >
           Property Details
-
-          <IconButton
-            onClick={closeView}
-            size="small"
-          >
+          <IconButton onClick={closeView} size="small">
             <Close />
           </IconButton>
         </DialogTitle>
@@ -767,31 +667,25 @@ const PropertyApproval: React.FC = () => {
                     overflowX: "auto",
                   }}
                 >
-                  {property.images.map(
-                    (img, index) => (
-                      <Box
-                        key={index}
-                        component="img"
-                        src={img.image}
-                        alt={`${property.title}-${index}`}
-                        sx={{
-                          width: 220,
-                          height: 150,
-                          objectFit: "cover",
-                          borderRadius: 2,
-                          flexShrink: 0,
-                        }}
-                      />
-                    )
-                  )}
+                  {property.images.map((img, index) => (
+                    <Box
+                      key={index}
+                      component="img"
+                      src={img.image}
+                      alt={`${property.title}-${index}`}
+                      sx={{
+                        width: 220,
+                        height: 150,
+                        objectFit: "cover",
+                        borderRadius: 2,
+                        flexShrink: 0,
+                      }}
+                    />
+                  ))}
                 </Box>
               )}
 
-              <Typography
-                variant="h6"
-                fontWeight={700}
-                sx={{ mb: 1 }}
-              >
+              <Typography variant="h6" sx={{ mb: 1, fontWeight: 700 }}>
                 {property.title}
               </Typography>
 
@@ -812,10 +706,7 @@ const PropertyApproval: React.FC = () => {
                     width: "100%",
                   }}
                 >
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     {property.description}
                   </Typography>
                 </Box>
@@ -830,17 +721,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Type
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.propertyType}
                   </Typography>
                 </Box>
@@ -855,17 +740,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Purpose
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.purpose}
                   </Typography>
                 </Box>
@@ -880,17 +759,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Price
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     ${property.price.toLocaleString()}
                   </Typography>
                 </Box>
@@ -905,17 +778,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Area
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.area} sqft
                   </Typography>
                 </Box>
@@ -930,17 +797,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Bedrooms
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.bedrooms}
                   </Typography>
                 </Box>
@@ -955,17 +816,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Bathrooms
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.bathrooms}
                   </Typography>
                 </Box>
@@ -980,17 +835,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Furnishing
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.furnishingStatus}
                   </Typography>
                 </Box>
@@ -1005,17 +854,11 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Status
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    fontWeight={600}
-                  >
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {property.status}
                   </Typography>
                 </Box>
@@ -1030,26 +873,19 @@ const PropertyApproval: React.FC = () => {
                     },
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Approval
                   </Typography>
 
                   <Box sx={{ mt: 0.5 }}>
                     <Chip
-                      label={
-                        property.approvalStatus
-                      }
+                      label={property.approvalStatus}
                       color={
-                        property.approvalStatus ===
-                        "Approved"
+                        property.approvalStatus === "Approved"
                           ? "success"
-                          : property.approvalStatus ===
-                            "rejected"
-                          ? "error"
-                          : "warning"
+                          : property.approvalStatus === "rejected"
+                            ? "error"
+                            : "warning"
                       }
                       size="small"
                     />
@@ -1058,9 +894,7 @@ const PropertyApproval: React.FC = () => {
 
                 {/* OWNER */}
 
-                {isPopulatedUser(
-                  property.owner
-                ) && (
+                {isPopulatedUser(property.owner) && (
                   <Box
                     sx={{
                       width: "100%",
@@ -1068,10 +902,7 @@ const PropertyApproval: React.FC = () => {
                   >
                     <Divider sx={{ my: 1 }} />
 
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
+                    <Typography variant="caption" color="text.secondary">
                       Owner
                     </Typography>
 
@@ -1084,31 +915,21 @@ const PropertyApproval: React.FC = () => {
                       }}
                     >
                       <Avatar
-                        src={
-                          property.owner.image
-                        }
+                        src={property.owner.image}
                         sx={{
                           width: 36,
                           height: 36,
                         }}
                       >
-                        {property.owner.name?.charAt(
-                          0
-                        )}
+                        {property.owner.name?.charAt(0)}
                       </Avatar>
 
                       <Box>
-                        <Typography
-                          variant="body2"
-                          fontWeight={600}
-                        >
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
                           {property.owner.name}
                         </Typography>
 
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                        >
+                        <Typography variant="caption" color="text.secondary">
                           {property.owner.email}
                         </Typography>
                       </Box>
@@ -1118,18 +939,13 @@ const PropertyApproval: React.FC = () => {
 
                 {/* AGENT */}
 
-                {isPopulatedUser(
-                  property.agentId
-                ) && (
+                {isPopulatedUser(property.agentId) && (
                   <Box
                     sx={{
                       width: "100%",
                     }}
                   >
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
+                    <Typography variant="caption" color="text.secondary">
                       Assigned Agent
                     </Typography>
 
@@ -1142,31 +958,21 @@ const PropertyApproval: React.FC = () => {
                       }}
                     >
                       <Avatar
-                        src={
-                          property.agentId.image
-                        }
+                        src={property.agentId.image}
                         sx={{
                           width: 36,
                           height: 36,
                         }}
                       >
-                        {property.agentId.name?.charAt(
-                          0
-                        )}
+                        {property.agentId.name?.charAt(0)}
                       </Avatar>
 
                       <Box>
-                        <Typography
-                          variant="body2"
-                          fontWeight={600}
-                        >
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
                           {property.agentId.name}
                         </Typography>
 
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                        >
+                        <Typography variant="caption" color="text.secondary">
                           {property.agentId.email}
                         </Typography>
                       </Box>
@@ -1183,8 +989,7 @@ const PropertyApproval: React.FC = () => {
                     }}
                   >
                     <Alert severity="error">
-                      <b>Rejection reason:</b>{" "}
-                      {property.rejectionReason}
+                      <b>Rejection reason:</b> {property.rejectionReason}
                     </Alert>
                   </Box>
                 )}
@@ -1203,34 +1008,23 @@ const PropertyApproval: React.FC = () => {
                       gap: 1,
                     }}
                   >
-                    <LocationOn
-                      fontSize="small"
-                      color="action"
-                    />
+                    <LocationOn fontSize="small" color="action" />
 
                     <Typography variant="caption">
-                      Coordinates: [
-                      {property.location.coordinates.join(
-                        ", "
-                      )}
-                      ]
+                      Coordinates: [{property.location.coordinates.join(", ")}]
                     </Typography>
                   </Box>
                 </Box>
 
                 {/* AMENITIES */}
 
-                {property.amenities?.length >
-                  0 && (
+                {property.amenities?.length > 0 && (
                   <Box
                     sx={{
                       width: "100%",
                     }}
                   >
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                    >
+                    <Typography variant="caption" color="text.secondary">
                       Amenities
                     </Typography>
 
@@ -1242,33 +1036,23 @@ const PropertyApproval: React.FC = () => {
                         mt: 0.5,
                       }}
                     >
-                      {property.amenities.map(
-                        (amenity) => (
-                          <Chip
-                            key={amenity}
-                            label={amenity}
-                            size="small"
-                          />
-                        )
-                      )}
+                      {property.amenities.map((amenity) => (
+                        <Chip key={amenity} label={amenity} size="small" />
+                      ))}
                     </Box>
                   </Box>
                 )}
               </Box>
             </>
           ) : (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-            >
+            <Typography variant="body2" color="text.secondary">
               Property not found.
             </Typography>
           )}
         </DialogContent>
 
         <DialogActions>
-          {property?.approvalStatus ===
-            "Pending" && (
+          {property?.approvalStatus === "Pending" && (
             <Button
               variant="contained"
               color="success"
@@ -1282,9 +1066,7 @@ const PropertyApproval: React.FC = () => {
             </Button>
           )}
 
-          <Button onClick={closeView}>
-            Close
-          </Button>
+          <Button onClick={closeView}>Close</Button>
         </DialogActions>
       </Dialog>
 
@@ -1319,13 +1101,7 @@ const PropertyApproval: React.FC = () => {
         <Divider />
 
         <DialogContent>
-          <Alert
-            severity={
-              permanentDelete
-                ? "error"
-                : "warning"
-            }
-          >
+          <Alert severity={permanentDelete ? "error" : "warning"}>
             {permanentDelete
               ? "This action CANNOT be undone. All images will be destroyed from Cloudinary and the property will be erased from the database."
               : "This property will be soft-deleted. Owners/admins can no longer see it, but it can still be restored."}
@@ -1333,17 +1109,11 @@ const PropertyApproval: React.FC = () => {
 
           {deleteTarget && (
             <Box sx={{ mt: 2 }}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-              >
+              <Typography variant="caption" color="text.secondary">
                 Property
               </Typography>
 
-              <Typography
-                variant="body2"
-                fontWeight={600}
-              >
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 {deleteTarget.title}
               </Typography>
             </Box>
@@ -1351,33 +1121,17 @@ const PropertyApproval: React.FC = () => {
         </DialogContent>
 
         <DialogActions>
-          <Button
-            onClick={() =>
-              setDeleteOpen(false)
-            }
-          >
-            Cancel
-          </Button>
+          <Button onClick={() => setDeleteOpen(false)}>Cancel</Button>
 
           <Button
             variant="contained"
-            color={
-              permanentDelete
-                ? "error"
-                : "warning"
-            }
+            color={permanentDelete ? "error" : "warning"}
             startIcon={
-              permanentDelete ? (
-                <DeleteForever />
-              ) : (
-                <RestoreFromTrash />
-              )
+              permanentDelete ? <DeleteForever /> : <RestoreFromTrash />
             }
             onClick={confirmDelete}
           >
-            {permanentDelete
-              ? "Delete Permanently"
-              : "Move to Trash"}
+            {permanentDelete ? "Delete Permanently" : "Move to Trash"}
           </Button>
         </DialogActions>
       </Dialog>

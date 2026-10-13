@@ -29,27 +29,25 @@ import type {
   CancelFormValues,
 } from "../typescript/type/appointment.types";
 
-  import type {
-  UpdateTransactionFormValues,
-} from "../typescript/type/saleTransaction.types";
+import type { UpdateTransactionFormValues } from "../typescript/type/saleTransaction.types";
 
 import type {
   RentalApplicationFormValues,
   RentalActionFormValues,
 } from "../typescript/type/rental.types";
 
-  import type {
+import type {
   LeaseFormValues,
   UpdateLeaseFormValues,
   TerminateLeaseFormValues,
 } from "../typescript/type/lease.types";
 
-  import type {
+import type {
   SaleOfferFormValues,
   RespondSaleOfferFormValues,
 } from "../typescript/type/saleOffer.types";
 
- import type {
+import type {
   ReviewFormValues,
   ReviewActionFormValues,
 } from "../typescript/type/review.types";
@@ -473,27 +471,19 @@ export const replyInquirySchema: yup.ObjectSchema<ReplyInquiryFormValues> =
       .required("Reply is required"),
   });
 
-  
-
 // =====================================================
 // APPOINTMENT SCHEMAS
 // =====================================================
-
-
 
 export const appointmentSchema: yup.ObjectSchema<AppointmentFormValues> =
   yup.object({
     appointmentDate: yup
       .string()
       .required("Appointment date is required")
-      .test(
-        "is-future",
-        "Appointment date must be in the future",
-        (value) => {
-          if (!value) return false;
-          return new Date(value) > new Date();
-        }
-      ),
+      .test("is-future", "Appointment date must be in the future", (value) => {
+        if (!value) return false;
+        return new Date(value) > new Date();
+      }),
 
     duration: yup
       .number()
@@ -503,11 +493,7 @@ export const appointmentSchema: yup.ObjectSchema<AppointmentFormValues> =
       .max(480, "Duration cannot exceed 480 minutes")
       .required("Duration is required"),
 
-    message: yup
-      .string()
-      .trim()
-      .max(1000, "Message is too long")
-      .default(""),
+    message: yup.string().trim().max(1000, "Message is too long").default(""),
   });
 
 export const rescheduleSchema: yup.ObjectSchema<RescheduleFormValues> =
@@ -515,10 +501,8 @@ export const rescheduleSchema: yup.ObjectSchema<RescheduleFormValues> =
     appointmentDate: yup
       .string()
       .required("New date is required")
-      .test(
-        "is-future",
-        "New date must be in the future",
-        (value) => (value ? new Date(value) > new Date() : false)
+      .test("is-future", "New date must be in the future", (value) =>
+        value ? new Date(value) > new Date() : false,
       ),
     duration: yup
       .number()
@@ -539,9 +523,6 @@ export const cancelAppointmentFormSchema: yup.ObjectSchema<CancelFormValues> =
       .default(""),
   });
 
-
-  
-
 // =====================================================
 // RENTAL APPLICATION SCHEMAS
 // =====================================================
@@ -554,19 +535,11 @@ export const rentalApplicationSchema: yup.ObjectSchema<RentalApplicationFormValu
       .min(0, "Monthly income cannot be negative")
       .required("Monthly income is required"),
 
-    employmentStatus: yup
-      .string()
-      .trim()
-      .max(100, "Too long")
-      .default(""),
+    employmentStatus: yup.string().trim().max(100, "Too long").default(""),
 
     occupation: yup.string().trim().max(100, "Too long").default(""),
 
-    message: yup
-      .string()
-      .trim()
-      .max(1000, "Message is too long")
-      .default(""),
+    message: yup.string().trim().max(1000, "Message is too long").default(""),
   });
 
 export const rentalActionSchema: yup.ObjectSchema<RentalActionFormValues> =
@@ -578,8 +551,6 @@ export const rentalActionSchema: yup.ObjectSchema<RentalActionFormValues> =
       .max(500, "Reason too long")
       .required("Rejection reason is required"),
   });
-
-
 
 // =====================================================
 // LEASE SCHEMAS
@@ -597,7 +568,7 @@ export const leaseSchema: yup.ObjectSchema<LeaseFormValues> = yup.object({
     .test(
       "is-valid",
       "Invalid start date",
-      (v) => !!v && !isNaN(new Date(v).getTime())
+      (v) => !!v && !isNaN(new Date(v).getTime()),
     ),
 
   endDate: yup
@@ -610,7 +581,7 @@ export const leaseSchema: yup.ObjectSchema<LeaseFormValues> = yup.object({
         const { startDate } = this.parent as { startDate?: string };
         if (!value || !startDate) return false;
         return new Date(value) > new Date(startDate);
-      }
+      },
     ),
 
   monthlyRent: yup
@@ -641,7 +612,7 @@ export const updateLeaseSchema: yup.ObjectSchema<UpdateLeaseFormValues> =
       .test(
         "is-valid",
         "Invalid start date",
-        (v) => !!v && !isNaN(new Date(v).getTime())
+        (v) => !!v && !isNaN(new Date(v).getTime()),
       ),
 
     endDate: yup
@@ -654,7 +625,7 @@ export const updateLeaseSchema: yup.ObjectSchema<UpdateLeaseFormValues> =
           const { startDate } = this.parent as { startDate?: string };
           if (!value || !startDate) return false;
           return new Date(value) > new Date(startDate);
-        }
+        },
       ),
 
     monthlyRent: yup
@@ -669,7 +640,11 @@ export const updateLeaseSchema: yup.ObjectSchema<UpdateLeaseFormValues> =
       .min(0)
       .default(0),
 
-    agreementDocument: yup.string().trim().url("Must be a valid URL").default(""),
+    agreementDocument: yup
+      .string()
+      .trim()
+      .url("Must be a valid URL")
+      .default(""),
   });
 
 export const terminateLeaseSchema: yup.ObjectSchema<TerminateLeaseFormValues> =
@@ -682,8 +657,6 @@ export const terminateLeaseSchema: yup.ObjectSchema<TerminateLeaseFormValues> =
       .required("Termination reason is required"),
   });
 
-
-
 export const saleOfferSchema: yup.ObjectSchema<SaleOfferFormValues> =
   yup.object({
     offerPrice: yup
@@ -692,11 +665,7 @@ export const saleOfferSchema: yup.ObjectSchema<SaleOfferFormValues> =
       .positive("Offer price must be greater than 0")
       .required("Offer price is required"),
 
-    message: yup
-      .string()
-      .trim()
-      .max(2000, "Message is too long")
-      .default(""),
+    message: yup.string().trim().max(2000, "Message is too long").default(""),
   });
 
 export const respondSaleOfferSchema: yup.ObjectSchema<RespondSaleOfferFormValues> =
@@ -704,7 +673,9 @@ export const respondSaleOfferSchema: yup.ObjectSchema<RespondSaleOfferFormValues
     action: yup
       .string()
       .oneOf(["accept", "reject", "counter"], "Invalid action")
-      .required("Action is required") as yup.StringSchema<RespondSaleOfferFormValues["action"]>,
+      .required("Action is required") as yup.StringSchema<
+      RespondSaleOfferFormValues["action"]
+    >,
 
     counterOfferPrice: yup
       .number()
@@ -718,29 +689,33 @@ export const respondSaleOfferSchema: yup.ObjectSchema<RespondSaleOfferFormValues
         otherwise: (schema) => schema.default(0),
       }),
 
-    message: yup
-      .string()
-      .trim()
-      .max(2000, "Message is too long")
-      .default(""),
+    message: yup.string().trim().max(2000, "Message is too long").default(""),
   });
-
-
 
 export const updateTransactionSchema: yup.ObjectSchema<UpdateTransactionFormValues> =
   yup.object({
     transactionStatus: yup
       .string()
       .oneOf(
-        ["initiated", "agreement_signed", "payment_pending", "completed", "cancelled"],
-        "Invalid transaction status"
+        [
+          "initiated",
+          "agreement_signed",
+          "payment_pending",
+          "completed",
+          "cancelled",
+        ],
+        "Invalid transaction status",
       )
-      .required("Status is required") as yup.StringSchema<UpdateTransactionFormValues["transactionStatus"]>,
+      .required("Status is required") as yup.StringSchema<
+      UpdateTransactionFormValues["transactionStatus"]
+    >,
 
     paymentStatus: yup
       .string()
       .oneOf(["unpaid", "partial", "paid"], "Invalid payment status")
-      .required("Payment status is required") as yup.StringSchema<UpdateTransactionFormValues["paymentStatus"]>,
+      .required("Payment status is required") as yup.StringSchema<
+      UpdateTransactionFormValues["paymentStatus"]
+    >,
 
     amountPaid: yup
       .number()
@@ -748,14 +723,8 @@ export const updateTransactionSchema: yup.ObjectSchema<UpdateTransactionFormValu
       .min(0, "Amount cannot be negative")
       .required("Amount paid is required"),
 
-    notes: yup
-      .string()
-      .trim()
-      .max(2000, "Notes are too long")
-      .default(""),
+    notes: yup.string().trim().max(2000, "Notes are too long").default(""),
   });
-
- 
 
 export const reviewSchema: yup.ObjectSchema<ReviewFormValues> = yup.object({
   rating: yup
@@ -779,10 +748,12 @@ export const reviewActionSchema: yup.ObjectSchema<ReviewActionFormValues> =
     action: yup
       .string()
       .oneOf(["approve", "reject"], "Invalid action")
-      .required("Action is required") as yup.StringSchema<ReviewActionFormValues["action"]>,
+      .required("Action is required"),
 
     reason: yup
       .string()
+      .defined()
+      .default("")
       .trim()
       .max(1000, "Reason is too long")
       .when("action", {
@@ -791,6 +762,6 @@ export const reviewActionSchema: yup.ObjectSchema<ReviewActionFormValues> =
           schema
             .min(3, "Rejection reason must be at least 3 characters")
             .required("Reason is required when rejecting"),
-        otherwise: (schema) => schema.default(""),
+        otherwise: (schema) => schema,
       }),
   });

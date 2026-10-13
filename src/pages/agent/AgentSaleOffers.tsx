@@ -40,11 +40,11 @@ const STATUS_COLORS: Record<
 };
 
 const isPopulatedProperty = (
-  val: Property | string | undefined
+  val: Property | string | undefined,
 ): val is Property => !!val && typeof val === "object" && "title" in val;
 
 const isPopulatedUser = (
-  val: PopulatedUserLite | string | null | undefined
+  val: PopulatedUserLite | string | null | undefined,
 ): val is PopulatedUserLite =>
   !!val && typeof val === "object" && "name" in val;
 
@@ -61,7 +61,7 @@ const groupByProperty = (offers: SaleOffer[]): PropertyGroup[] => {
     const pid =
       typeof o.property === "string"
         ? o.property
-        : o.property?._id ?? "unknown";
+        : (o.property?._id ?? "unknown");
 
     if (!map.has(pid)) {
       map.set(pid, {
@@ -75,7 +75,7 @@ const groupByProperty = (offers: SaleOffer[]): PropertyGroup[] => {
   });
 
   return Array.from(map.values()).sort(
-    (a, b) => b.offers.length - a.offers.length
+    (a, b) => b.offers.length - a.offers.length,
   );
 };
 
@@ -83,9 +83,7 @@ const AgentSaleOffers: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { saleOffers, loading } = useAppSelector(
-    (state) => state.saleOffer
-  );
+  const { saleOffers, loading } = useAppSelector((state) => state.saleOffer);
 
   const [expanded, setExpanded] = useState<string | false>(false);
 
@@ -102,7 +100,7 @@ const AgentSaleOffers: React.FC = () => {
 
   const propertyGroups = useMemo(
     () => groupByProperty(saleOffers),
-    [saleOffers]
+    [saleOffers],
   );
 
   const totalOffers = saleOffers.length;
@@ -168,9 +166,7 @@ const AgentSaleOffers: React.FC = () => {
               py: 8,
             }}
           >
-            <LocalOffer
-              sx={{ fontSize: 80, color: "text.disabled", mb: 2 }}
-            />
+            <LocalOffer sx={{ fontSize: 80, color: "text.disabled", mb: 2 }} />
             <Typography color="text.secondary">
               No offers on your assigned properties yet.
             </Typography>
@@ -227,7 +223,7 @@ const AgentSaleOffers: React.FC = () => {
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        display="block"
+                        sx={{ display: "block" }}
                       >
                         {group.property &&
                           `${group.property.propertyType} • For Sale`}
@@ -257,7 +253,18 @@ const AgentSaleOffers: React.FC = () => {
                 <AccordionDetails sx={{ pt: 2 }}>
                   <Grid container spacing={2}>
                     {group.offers.map((offer) => (
-                      <Grid item xs={12} sm={6} md={4} key={offer._id}>
+                      <Box
+                        key={offer._id}
+                        sx={{
+                          width: {
+                            xs: "100%",
+                            sm: "50%",
+                            md: "33.3333%",
+                          },
+                          p: 1,
+                          boxSizing: "border-box",
+                        }}
+                      >
                         <Card
                           sx={{
                             borderRadius: 2,
@@ -282,11 +289,10 @@ const AgentSaleOffers: React.FC = () => {
                                 >
                                   {offer.buyer.name?.charAt(0)}
                                 </Avatar>
-                                <Box minWidth={0}>
+                                <Box sx={{ minWidth: 0 }}>
                                   <Typography
                                     variant="caption"
-                                    sx={{ fontWeight: 600 }}
-                                    display="block"
+                                    sx={{ fontWeight: 600, display: "block" }}
                                   >
                                     {offer.buyer.name}
                                   </Typography>
@@ -298,7 +304,7 @@ const AgentSaleOffers: React.FC = () => {
                                     {offer.buyer.email}
                                   </Typography>
                                 </Box>
-                                <Box ml="auto">
+                                <Box sx={{ ml: "auto" }}>
                                   <Chip
                                     label={offer.status}
                                     color={
@@ -320,10 +326,7 @@ const AgentSaleOffers: React.FC = () => {
                                   gap: 0.5,
                                 }}
                               >
-                                <AttachMoney
-                                  fontSize="small"
-                                  color="action"
-                                />
+                                <AttachMoney fontSize="small" color="action" />
                                 <Typography
                                   variant="body2"
                                   sx={{ fontWeight: 600 }}
@@ -378,7 +381,7 @@ const AgentSaleOffers: React.FC = () => {
                               startIcon={<LocalOffer fontSize="small" />}
                               onClick={() =>
                                 navigate(
-                                  `/agent/property/${group.propertyId}/offers`
+                                  `/agent/property/${group.propertyId}/offers`,
                                 )
                               }
                             >
@@ -386,7 +389,7 @@ const AgentSaleOffers: React.FC = () => {
                             </Button>
                           </CardActions>
                         </Card>
-                      </Grid>
+                      </Box>
                     ))}
                   </Grid>
                 </AccordionDetails>

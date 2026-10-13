@@ -127,7 +127,7 @@ const RentalApplicationModal: React.FC<RentalApplicationModalProps> = ({
             <Home />
           </Avatar>
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="subtitle2" fontWeight={700} noWrap>
+            <Typography variant="subtitle2" sx={{fontWeight:700}}noWrap>
               {property.title}
             </Typography>
             <Typography variant="caption" color="text.secondary">

@@ -225,7 +225,10 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
       endDate: toInput(l.endDate),
       monthlyRent: l.monthlyRent,
       securityDeposit: l.securityDeposit,
-      agreementDocument: l.agreementDocument?.url ?? "",
+      agreementDocument:
+        typeof l.agreementDocument === "string"
+          ? l.agreementDocument
+          : (l.agreementDocument?.url ?? ""),
     });
 
     setEditOpen(true);
@@ -944,21 +947,33 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
 
               {/* Agreement */}
 
-              {lease.agreementDocument?.url && (
-                <Button
-                  variant="outlined"
-                  size="small"
-                  href={lease.agreementDocument.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  startIcon={<Description />}
-                  sx={{
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  View Agreement
-                </Button>
-              )}
+              {typeof lease.agreementDocument === "string"
+                ? lease.agreementDocument && (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      href={lease.agreementDocument}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      startIcon={<Description />}
+                      sx={{ alignSelf: "flex-start" }}
+                    >
+                      View Agreement
+                    </Button>
+                  )
+                : lease.agreementDocument?.url && (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      href={lease.agreementDocument.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      startIcon={<Description />}
+                      sx={{ alignSelf: "flex-start" }}
+                    >
+                      View Agreement
+                    </Button>
+                  )}
 
               {/* Termination reason */}
 

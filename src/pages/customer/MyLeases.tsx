@@ -509,22 +509,25 @@ const MyLeases: React.FC = () => {
                 </Box>
               </Box>
 
-              {/* Agreement document */}
-              {lease.agreementDocument?.url && (
+              
+
+              {(typeof lease.agreementDocument === "string"
+                ? lease.agreementDocument
+                : lease.agreementDocument?.url) && (
                 <Box>
                   <Typography variant="caption" color="text.secondary">
                     Agreement Document
                   </Typography>
 
-                  <Box
-                    sx={{
-                      mt: 0.5,
-                    }}
-                  >
+                  <Box sx={{ mt: 0.5 }}>
                     <Button
                       variant="outlined"
                       size="small"
-                      href={lease.agreementDocument.url}
+                      href={
+                        typeof lease.agreementDocument === "string"
+                          ? lease.agreementDocument
+                          : (lease.agreementDocument?.url ?? "")
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       startIcon={<Description />}

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
