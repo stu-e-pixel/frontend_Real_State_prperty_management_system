@@ -15,7 +15,6 @@ import {
   Bed,
   Bathtub,
   SquareFoot,
-  AttachMoney,
   ArrowForward,
 } from "@mui/icons-material";
 
@@ -190,12 +189,7 @@ const PublicPropertyCard = ({
             mb: 2,
           }}
         >
-          <AttachMoney
-            sx={{
-              color: "#0f766e",
-              fontSize: 24,
-            }}
-          />
+          
 
           <Typography
             component="p"
@@ -207,7 +201,7 @@ const PublicPropertyCard = ({
               overflowWrap: "anywhere",
             }}
           >
-            {formattedPrice}
+            ₹{formattedPrice}
           </Typography>
         </Box>
 

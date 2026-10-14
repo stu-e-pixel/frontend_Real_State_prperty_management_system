@@ -364,7 +364,7 @@ const MySaleOffers: React.FC = () => {
                         </Typography>
 
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          ${offer.offerPrice.toLocaleString()}
+                          ₹{offer.offerPrice.toLocaleString()}
                         </Typography>
                       </Box>
 
@@ -385,7 +385,7 @@ const MySaleOffers: React.FC = () => {
                           sx={{ fontWeight: 700 }}
                           color="primary"
                         >
-                          ${offer.currentOfferPrice.toLocaleString()}
+                          ₹{offer.currentOfferPrice.toLocaleString()}
                         </Typography>
                       </Box>
 
@@ -566,7 +566,7 @@ const MySaleOffers: React.FC = () => {
                   </Typography>
 
                   <Typography variant="body1">
-                    ${viewTarget.offerPrice.toLocaleString()}
+                    ₹{viewTarget.offerPrice.toLocaleString()}
                   </Typography>
                 </Box>
 
@@ -576,7 +576,7 @@ const MySaleOffers: React.FC = () => {
                   </Typography>
 
                   <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                    ${viewTarget.currentOfferPrice.toLocaleString()}
+                    ₹{viewTarget.currentOfferPrice.toLocaleString()}
                   </Typography>
                 </Box>
 
@@ -632,7 +632,7 @@ const MySaleOffers: React.FC = () => {
 
                       <TimelineContent>
                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                          You offered $
+                          You offered ₹
                           {viewTarget.offerPrice.toLocaleString()}
                         </Typography>
 
@@ -662,7 +662,7 @@ const MySaleOffers: React.FC = () => {
 
                         <TimelineContent>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {history.offeredByModel} countered at $
+                            {history.offeredByModel} countered at ₹
                             {history.amount.toLocaleString()}
                           </Typography>
 
@@ -715,7 +715,7 @@ const MySaleOffers: React.FC = () => {
               <Alert severity="info" sx={{ mb: 2 }}>
                 The owner/agent countered at{" "}
                 <Box component="span" sx={{ fontWeight: 700 }}>
-                  ${respondTarget.currentOfferPrice.toLocaleString()}
+                  ₹{respondTarget.currentOfferPrice.toLocaleString()}
                 </Box>
                 .
               </Alert>

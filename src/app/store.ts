@@ -12,6 +12,7 @@ import saleOfferReducer from "../features/saleOffer/saleOfferSlice";
 import saleTransactionReducer from "../features/saleTransaction/saleTransactionSlice";
 import favoriteReducer from "../features/favorite/favoriteSlice";
 import reviewReducer from "../features/review/reviewSlice";
+import notificationReducer from "../features/notification/notificationSlice";
 
 
 export const store = configureStore({
@@ -29,6 +30,7 @@ export const store = configureStore({
     saleTransaction: saleTransactionReducer,
     favorite: favoriteReducer,
     review: reviewReducer,
+    notification: notificationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

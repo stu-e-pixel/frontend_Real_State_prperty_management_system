@@ -38,7 +38,6 @@ import {
   Bathtub,
   SquareFoot,
   Refresh,
-  AttachMoney,
   Search,
   CheckCircle,
   Home,
@@ -57,6 +56,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 
 import type { PopulatedUser } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 // ======================================================
 // CONSTANTS
@@ -554,11 +554,9 @@ const AgentApprovedProperties: React.FC = () => {
                         mb: 1,
                       }}
                     >
-                      <AttachMoney
+                      <IndianRupee
                         fontSize="small"
-                        sx={{
-                          color: "success.main",
-                        }}
+                        
                       />
 
                       <Typography
@@ -926,7 +924,7 @@ const AgentApprovedProperties: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    ${property.price.toLocaleString()}
+                    ₹{property.price.toLocaleString()}
                   </Typography>
                 </Box>
 

@@ -15,6 +15,7 @@ import { AccountCircle, Apartment, KeyboardArrowDown, LockReset, Logout } from "
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import { useNavigate, Link } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
+import NotificationBell from "../notification/NotificationBell";
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -122,12 +123,16 @@ const Navbar: React.FC = () => {
     {/* AUTHENTICATED ADMIN */}
     {isAuthenticated ? (
       <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, sm: 2 } }}>
+
+        <NotificationBell />
         <Box
           sx={{
             display: { xs: "none", sm: "block" },
             textAlign: "right",
           }}
         >
+          
+
           <Typography sx={{ fontSize: "0.73rem", color: "#64748b" }}>
             Welcome back,
           </Typography>

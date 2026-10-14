@@ -71,7 +71,7 @@ const isPopulatedUser = (
   !!value && typeof value === "object" && "name" in value;
 
 const formatCurrency = (amount: number): string =>
-  `$${amount.toLocaleString()}`;
+  `₹${amount.toLocaleString()}`;
 
 const formatStatus = (status: string): string =>
   status.replace(/_/g, " ");

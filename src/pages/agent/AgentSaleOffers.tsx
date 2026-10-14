@@ -18,7 +18,7 @@ import {
   Grid,
   Stack,
 } from "@mui/material";
-import { LocalOffer, ExpandMore, Home, AttachMoney } from "@mui/icons-material";
+import { LocalOffer, ExpandMore, Home } from "@mui/icons-material";
 
 import MainLayout from "../../components/layout/MainLayout";
 import { getSaleOfferByAgent } from "../../features/saleOffer/saleOfferSlice";
@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import type { SaleOffer } from "../../typescript/type/saleOffer.types";
 import type { PopulatedUserLite } from "../../typescript/type/inquiry.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 const STATUS_COLORS: Record<
   string,
@@ -234,7 +235,7 @@ const AgentSaleOffers: React.FC = () => {
                           color="primary"
                           sx={{ fontWeight: 600 }}
                         >
-                          Asking: ${group.property.price.toLocaleString()}
+                          Asking: ₹{group.property.price.toLocaleString()}
                         </Typography>
                       )}
                     </Box>
@@ -326,12 +327,12 @@ const AgentSaleOffers: React.FC = () => {
                                   gap: 0.5,
                                 }}
                               >
-                                <AttachMoney fontSize="small" color="action" />
+                                <IndianRupee fontSize="small" color="action" />
                                 <Typography
                                   variant="body2"
                                   sx={{ fontWeight: 600 }}
                                 >
-                                  ${offer.offerPrice.toLocaleString()}
+                                  ₹{offer.offerPrice.toLocaleString()}
                                 </Typography>
                               </Box>
 
@@ -341,7 +342,7 @@ const AgentSaleOffers: React.FC = () => {
                                   color="primary"
                                   sx={{ fontWeight: 600 }}
                                 >
-                                  Current: $
+                                  Current: ₹
                                   {offer.currentOfferPrice.toLocaleString()}
                                 </Typography>
                               )}

@@ -161,7 +161,7 @@ const MakeSaleOfferModal: React.FC<MakeSaleOfferModalProps> = ({
             </Typography>
 
             <Typography variant="caption" color="text.secondary">
-              Asking price: ${property.price.toLocaleString()}
+              Asking price: ₹{property.price.toLocaleString()}
             </Typography>
           </Box>
         </Box>

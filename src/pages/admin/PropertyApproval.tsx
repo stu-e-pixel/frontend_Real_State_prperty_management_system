@@ -36,7 +36,6 @@ import {
   Bathtub,
   SquareFoot,
   Refresh,
-  AttachMoney,
   Delete,
   DeleteForever,
   RestoreFromTrash,
@@ -60,6 +59,7 @@ import type {
   Property,
   PopulatedUser,
 } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 type TabValue = "Pending" | "Approved" | "rejected" | "all";
 
@@ -429,11 +429,8 @@ const PropertyApproval: React.FC = () => {
                         alignItems: "center",
                       }}
                     >
-                      <AttachMoney
+                      <IndianRupee
                         fontSize="small"
-                        sx={{
-                          color: "success.main",
-                        }}
                       />
 
                       <Typography
@@ -764,7 +761,7 @@ const PropertyApproval: React.FC = () => {
                   </Typography>
 
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    ${property.price.toLocaleString()}
+                    ₹{property.price.toLocaleString()}
                   </Typography>
                 </Box>
 

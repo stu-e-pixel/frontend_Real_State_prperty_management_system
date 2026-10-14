@@ -24,7 +24,6 @@ import {
   Refresh,
   Description,
   CalendarMonth,
-  AttachMoney,
   CheckCircle,
   HourglassEmpty,
   Cancel,
@@ -37,6 +36,7 @@ import { getAllLeases } from "../../features/lease/leaseSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import type { PopulatedUserLite } from "../../typescript/type/inquiry.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 const COLORS = {
   navy: "#0f172a",
@@ -77,7 +77,7 @@ const formatDate = (date: string | Date) => {
 };
 
 const formatCurrency = (amount: number) =>
-  `$${Number(amount || 0).toLocaleString()}`;
+  `₹${Number(amount || 0).toLocaleString()}`;
 
 const AdminLeases: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -311,7 +311,7 @@ const AdminLeases: React.FC = () => {
             {
               label: "Monthly Rent",
               value: formatCurrency(totalMonthlyRent),
-              icon: <AttachMoney />,
+              icon: <IndianRupee />,
               color: "#7c3aed",
               bg: "#f5f3ff",
             },

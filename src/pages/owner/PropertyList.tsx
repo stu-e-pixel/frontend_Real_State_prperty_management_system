@@ -449,7 +449,7 @@ const PropertyList: React.FC = () => {
                         fontWeight: 700,
                       }}
                     >
-                      ${property.price.toLocaleString()}
+                      ₹{property.price.toLocaleString()}
                     </Typography>
 
                     {/* PROPERTY FEATURES */}
@@ -749,7 +749,7 @@ const PropertyList: React.FC = () => {
                 >
                   <DetailItem
                     label="Price"
-                    value={`$${selected.price.toLocaleString()}`}
+                    value={`₹${selected.price.toLocaleString()}`}
                   />
                 </Box>
 

@@ -22,7 +22,6 @@ import {
   LocalOffer,
   ExpandMore,
   Home,
-  AttachMoney,
 } from "@mui/icons-material";
 
 import MainLayout from "../../components/layout/MainLayout";
@@ -37,6 +36,7 @@ import {
 import type { SaleOffer } from "../../typescript/type/saleOffer.types";
 import type { PopulatedUserLite } from "../../typescript/type/inquiry.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // STATUS COLORS
@@ -450,7 +450,7 @@ const OwnerSaleOffers: React.FC = () => {
                               fontWeight: 800,
                             }}
                           >
-                            Asking: $
+                            Asking: ₹
                             {Number(
                               group.property.price
                             ).toLocaleString("en-US")}
@@ -622,9 +622,9 @@ const OwnerSaleOffers: React.FC = () => {
                                     bgcolor: "#ecfdf5",
                                   }}
                                 >
-                                  <AttachMoney
+                                  <IndianRupee
                                     fontSize="small"
-                                    sx={{ color: "#047857" }}
+                                    color= "#047857"
                                   />
 
                                   <Box sx={{ minWidth: 0 }}>
@@ -644,7 +644,7 @@ const OwnerSaleOffers: React.FC = () => {
                                         overflowWrap: "anywhere",
                                       }}
                                     >
-                                      $
+                                      ₹
                                       {Number(
                                         offer.offerPrice
                                       ).toLocaleString("en-US")}
@@ -661,7 +661,7 @@ const OwnerSaleOffers: React.FC = () => {
                                       fontWeight: 700,
                                     }}
                                   >
-                                    Current offer: $
+                                    Current offer: ₹
                                     {Number(
                                       offer.currentOfferPrice
                                     ).toLocaleString("en-US")}

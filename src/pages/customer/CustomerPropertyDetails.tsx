@@ -17,7 +17,6 @@ import {
   Bed,
   Bathtub,
   SquareFoot,
-  AttachMoney,
   CheckCircle,
   Email,
   Home,
@@ -46,6 +45,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 
 import type { PopulatedUser } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // TYPE GUARD
@@ -177,7 +177,7 @@ const CustomerPropertyDetails = () => {
   const owner = isPopulatedUser(property.owner) ? property.owner : null;
 
   const formatCurrency = (amount: number): string =>
-    `$${(amount ?? 0).toLocaleString()}`;
+    `₹${(amount ?? 0).toLocaleString()}`;
 
   // =====================================================
   // MAIN RENDER
@@ -356,11 +356,9 @@ const CustomerPropertyDetails = () => {
                   mb: 2,
                 }}
               >
-                <AttachMoney
-                  sx={{
-                    color: "success.main",
-                    fontSize: 32,
-                  }}
+                <IndianRupee
+                  
+                    fontSize={32}
                 />
 
                 <Typography

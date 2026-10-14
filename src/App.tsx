@@ -4,6 +4,7 @@ import { store } from './app/store'
 import { RouterProvider } from 'react-router-dom'
 import Routes from './router/Routes'
 import { Toaster } from 'react-hot-toast'
+import NotificationProvider from './Provider/NotificationProvider'
 
 function App() {
 
@@ -48,7 +49,9 @@ function App() {
         }}
       />
       <Provider store={store}>
+        <NotificationProvider>
         <RouterProvider router={Routes}/>
+        </NotificationProvider>
       </Provider>
     </>
   )

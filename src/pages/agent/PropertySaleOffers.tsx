@@ -351,7 +351,7 @@ const PropertySaleOffers: React.FC = () => {
                         </Typography>
 
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          ${offer.offerPrice.toLocaleString()}
+                          ₹{offer.offerPrice.toLocaleString()}
                         </Typography>
                       </Box>
 
@@ -366,7 +366,7 @@ const PropertySaleOffers: React.FC = () => {
                             sx={{ fontWeight: 700 }}
                             color="primary"
                           >
-                            ${offer.currentOfferPrice.toLocaleString()}
+                            ₹{offer.currentOfferPrice.toLocaleString()}
                           </Typography>
                         </Box>
                       )}
@@ -550,7 +550,7 @@ const PropertySaleOffers: React.FC = () => {
                 </Typography>
 
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  ${viewTarget.offerPrice.toLocaleString()}
+                  ₹{viewTarget.offerPrice.toLocaleString()}
                 </Typography>
               </Box>
 
@@ -564,7 +564,7 @@ const PropertySaleOffers: React.FC = () => {
                   sx={{ fontWeight: 700 }}
                   color="primary"
                 >
-                  ${viewTarget.currentOfferPrice.toLocaleString()}
+                  ₹{viewTarget.currentOfferPrice.toLocaleString()}
                 </Typography>
               </Box>
 
@@ -632,7 +632,7 @@ const PropertySaleOffers: React.FC = () => {
               <Alert severity="info" sx={{ mb: 2 }}>
                 Buyer offered{" "}
                 <Box component="span" sx={{ fontWeight: 700 }}>
-                  ${respondTarget.currentOfferPrice.toLocaleString()}
+                  ₹{respondTarget.currentOfferPrice.toLocaleString()}
                 </Box>
               </Alert>
             )}

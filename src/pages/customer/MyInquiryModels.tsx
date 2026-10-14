@@ -237,7 +237,7 @@ const MyInquiryModels: React.FC<InquiryModalProps> = ({
                 mt: 0.5,
               }}
             >
-              ${property.price.toLocaleString()}
+              ₹{property.price.toLocaleString()}
             </Typography>
           </Box>
         </Box>

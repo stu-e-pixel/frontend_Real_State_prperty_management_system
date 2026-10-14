@@ -18,6 +18,7 @@ import { AccountCircle, Dashboard, HomeWork, KeyboardArrowDown, LockReset, Logou
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import { useNavigate, Link } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
+import NotificationBell from "../notification/NotificationBell";
 
 const OwnerNavbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -133,6 +134,7 @@ const OwnerNavbar: React.FC = () => {
           gap: { xs: 0.5, sm: 1.5 },
         }}
       >
+        <NotificationBell />
         {/* Dashboard shortcut */}
         <Button
           component={Link}

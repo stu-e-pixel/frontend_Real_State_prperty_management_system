@@ -1,23 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
+  Avatar,
   Box,
-  Paper,
-  Typography,
+  Button,
   Card,
   CardContent,
-  Button,
   Chip,
   Divider,
-  Avatar,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Paper,
   Skeleton,
+  Stack,
+  Typography,
 } from "@mui/material";
-
 import {
-  People,
+  PeopleAlt,
   Business,
   VerifiedUser,
   Apartment,
@@ -28,16 +28,18 @@ import {
   Star,
   ArrowForward,
   CheckCircle,
-  Pending,
-  AttachMoney,
+  PendingActions,
   TrendingUp,
   AdminPanelSettings,
   Schedule,
   RateReview,
+  DashboardRounded,
+  ArrowOutward,
+  HomeWork,
+  CurrencyRupee,
+  NotificationsActive,
 } from "@mui/icons-material";
-
 import { useNavigate } from "react-router-dom";
-
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import { getAllUsers } from "../../features/user/userSlice";
 import { getAllOwners } from "../../features/owner/ownerSlice";
@@ -47,51 +49,39 @@ import { getAllInquiries } from "../../features/inquiry/inquirySlice";
 import { getAllAppointments } from "../../features/appointment/appointmentSlice";
 import { getAllReviews } from "../../features/review/reviewSlice";
 
-// =====================================================
-// THEME
-// =====================================================
-
-const COLORS = {
-  navy: "#0f172a",
-  teal: "#134e4a",
-  emerald: "#0f766e",
-  emeraldHover: "#115e59",
-  mint: "#ecfdf5",
-  border: "#dbe7e4",
-  slate: "#64748b",
-  background: "#f8fafc",
+const THEME = {
+  ink: "#14231f",
+  muted: "#71817c",
+  green: "#087f5b",
+  greenDark: "#075e45",
+  greenSoft: "#e8f7f0",
+  border: "#e3ece7",
+  canvas: "#f5f8f6",
   white: "#ffffff",
 };
 
-// =====================================================
-// TYPES
-// =====================================================
-
-interface StatCardProps {
+type StatCardProps = {
   icon: React.ReactNode;
   label: string;
   value: number | string;
-  subtitle?: string;
+  note?: string;
   color: string;
   path: string;
-}
+};
 
-interface QuickAction {
+type QuickAction = {
   icon: React.ReactNode;
   label: string;
+  description: string;
   path: string;
   color: string;
-}
-
-// =====================================================
-// STAT CARD
-// =====================================================
+};
 
 const StatCard: React.FC<StatCardProps> = ({
   icon,
   label,
   value,
-  subtitle,
+  note,
   color,
   path,
 }) => {
@@ -100,80 +90,82 @@ const StatCard: React.FC<StatCardProps> = ({
   return (
     <Card
       onClick={() => navigate(path)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") navigate(path);
+      }}
       sx={{
-        width: "100%",
         height: "100%",
-        borderRadius: "18px",
         cursor: "pointer",
-        bgcolor: COLORS.white,
-        border: `1px solid ${COLORS.border}`,
-        boxShadow: "0 3px 12px rgba(15, 23, 42, 0.025)",
-        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        border: `1px solid ${THEME.border}`,
+        borderRadius: 4,
+        boxShadow: "0 5px 20px rgba(20, 35, 31, 0.035)",
+        transition:
+          "transform .2s ease, box-shadow .2s ease, border-color .2s ease",
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: "0 12px 28px rgba(15, 23, 42, 0.08)",
           borderColor: color,
+          boxShadow: "0 14px 30px rgba(20, 35, 31, 0.09)",
         },
       }}
     >
       <CardContent
         sx={{
-          p: { xs: 1.8, sm: 2.3 },
-          "&:last-child": { pb: { xs: 1.8, sm: 2.3 } },
+          p: { xs: 2, sm: 2.4 },
+          "&:last-child": { pb: { xs: 2, sm: 2.4 } },
         }}
       >
-        <Box
+        <Stack
+          direction="row"
+          spacing={2}
           sx={{
-            width: 46,
-            height: 46,
-            borderRadius: "14px",
-            bgcolor: `${color}15`,
-            color,
-            display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            justifyContent: "center",
             mb: 2,
-            "& svg": { fontSize: 25 },
           }}
         >
-          {icon}
-        </Box>
-
+          <Box
+            sx={{
+              width: 46,
+              height: 46,
+              display: "grid",
+              placeItems: "center",
+              borderRadius: 3,
+              bgcolor: `${color}16`,
+              color,
+              "& svg": { fontSize: 24 },
+            }}
+          >
+            {icon}
+          </Box>
+          <ArrowOutward sx={{ color: "#a6b3ad", fontSize: 19 }} />
+        </Stack>
         <Typography
-          variant="h4"
           sx={{
-            fontSize: { xs: "1.55rem", sm: "1.85rem" },
-            lineHeight: 1.2,
-            fontWeight: 800,
-            letterSpacing: "-0.8px",
-            color: COLORS.navy,
-            mb: 0.7,
-            overflowWrap: "anywhere",
+            mt: 2.1,
+            fontSize: { xs: "1.7rem", sm: "2rem" },
+            fontWeight: 850,
+            letterSpacing: "-1px",
+            color: THEME.ink,
+            lineHeight: 1.1,
           }}
         >
           {value}
         </Typography>
-
         <Typography
           sx={{
-            fontSize: "0.84rem",
-            fontWeight: 700,
-            color: "#334155",
-            mb: 0.5,
+            mt: 0.8,
+            color: THEME.ink,
+            fontWeight: 750,
+            fontSize: ".88rem",
           }}
         >
           {label}
         </Typography>
-
-        {subtitle && (
-          <Typography
-            sx={{
-              fontSize: "0.73rem",
-              color: COLORS.slate,
-              lineHeight: 1.5,
-            }}
-          >
-            {subtitle}
+        {note && (
+          <Typography sx={{ mt: 0.45, color: THEME.muted, fontSize: ".75rem" }}>
+            {note}
           </Typography>
         )}
       </CardContent>
@@ -181,134 +173,119 @@ const StatCard: React.FC<StatCardProps> = ({
   );
 };
 
-// =====================================================
-// SECTION HEADING
-// =====================================================
-
-interface SectionHeadingProps {
+const SectionTitle: React.FC<{
   title: string;
   subtitle?: string;
   icon?: React.ReactNode;
-}
-
-const SectionHeading: React.FC<SectionHeadingProps> = ({
-  title,
-  subtitle,
-  icon,
-}) => (
-  <Box sx={{ mb: 2.2 }}>
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+  action?: React.ReactNode;
+}> = ({ title, subtitle, icon, action }) => (
+  <Stack
+    direction="row"
+    spacing={2}
+    sx={{ alignItems: "center", justifyContent: "space-between", mb: 2.2 }}
+  >
+    <Stack
+      direction="row"
+      spacing={1.2}
+      sx={{ minWidth: 0, alignItems: "center" }}
+    >
       {icon && (
         <Box
           sx={{
-            color: COLORS.emerald,
-            display: "flex",
-            alignItems: "center",
-            "& svg": { fontSize: 23 },
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            borderRadius: 2.5,
+            bgcolor: THEME.greenSoft,
+            color: THEME.green,
+            display: "grid",
+            placeItems: "center",
           }}
         >
           {icon}
         </Box>
       )}
-
-      <Typography
-        sx={{
-          fontSize: { xs: "1.05rem", sm: "1.2rem" },
-          fontWeight: 800,
-          color: COLORS.navy,
-          letterSpacing: "-0.3px",
-        }}
-      >
-        {title}
-      </Typography>
-    </Box>
-
-    {subtitle && (
-      <Typography
-        sx={{
-          mt: 0.5,
-          fontSize: "0.82rem",
-          color: COLORS.slate,
-        }}
-      >
-        {subtitle}
-      </Typography>
-    )}
-  </Box>
+      <Box sx={{ minWidth: 0 }}>
+        <Typography
+          sx={{
+            color: THEME.ink,
+            fontWeight: 850,
+            fontSize: { xs: "1.05rem", sm: "1.2rem" },
+            letterSpacing: "-.35px",
+          }}
+        >
+          {title}
+        </Typography>
+        {subtitle && (
+          <Typography sx={{ mt: 0.3, color: THEME.muted, fontSize: ".8rem" }}>
+            {subtitle}
+          </Typography>
+        )}
+      </Box>
+    </Stack>
+    {action}
+  </Stack>
 );
 
-// =====================================================
-// EMPTY STATE
-// =====================================================
-
-interface EmptyStateProps {
-  icon: React.ReactNode;
-  message: string;
-}
-
-const EmptyState: React.FC<EmptyStateProps> = ({ icon, message }) => (
-  <Box
+const EmptyState: React.FC<{ icon: React.ReactNode; message: string }> = ({
+  icon,
+  message,
+}) => (
+  <Stack
+    spacing={1}
     sx={{
       py: 4,
       px: 2,
       textAlign: "center",
-      color: COLORS.slate,
+      alignItems: "center",
+      justifyContent: "center",
     }}
   >
     <Box
       sx={{
-        width: 54,
-        height: 54,
-        mx: "auto",
-        mb: 1.5,
+        width: 52,
+        height: 52,
+        display: "grid",
+        placeItems: "center",
         borderRadius: "50%",
-        bgcolor: COLORS.mint,
-        color: COLORS.emerald,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        "& svg": { fontSize: 28 },
+        bgcolor: THEME.greenSoft,
+        color: THEME.green,
+        "& svg": { fontSize: 26 },
       }}
     >
       {icon}
     </Box>
-
-    <Typography sx={{ fontSize: "0.87rem", fontWeight: 600 }}>
+    <Typography
+      sx={{ color: THEME.muted, fontWeight: 650, fontSize: ".86rem" }}
+    >
       {message}
     </Typography>
-  </Box>
+  </Stack>
 );
 
-// =====================================================
-// ADMIN DASHBOARD
-// =====================================================
+const panelSx = {
+  p: { xs: 2, sm: 2.6 },
+  border: `1px solid ${THEME.border}`,
+  borderRadius: 4,
+  boxShadow: "0 5px 20px rgba(20, 35, 31, 0.035)",
+  bgcolor: THEME.white,
+};
 
 const AdminDashboard: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // =====================================================
-  // REDUX STATE
-  // =====================================================
-
   const { user } = useAppSelector((state) => state.auth);
-
   const { users } = useAppSelector((state) => state.user);
   const { owners } = useAppSelector((state) => state.owner);
   const { agents } = useAppSelector((state) => state.agent);
-
   const { properties, loading: loadingProperties } = useAppSelector(
-    (state) => state.property
+    (state) => state.property,
   );
-
   const { inquiries } = useAppSelector((state) => state.inquiry);
   const { appointments } = useAppSelector((state) => state.appointment);
   const { saleOffers } = useAppSelector((state) => state.saleOffer);
   const { reviews } = useAppSelector((state) => state.review);
-
-  // =====================================================
-  // FETCH PLATFORM DATA
-  // =====================================================
 
   useEffect(() => {
     dispatch(getAllUsers({ page: 1, limit: 100, role: "customer" }));
@@ -320,10 +297,6 @@ const AdminDashboard: React.FC = () => {
     dispatch(getAllReviews());
   }, [dispatch]);
 
-  // =====================================================
-  // STATISTICS
-  // =====================================================
-
   const totalCustomers = users?.length ?? 0;
   const totalOwners = owners?.length ?? 0;
   const totalAgents = agents?.length ?? 0;
@@ -334,207 +307,245 @@ const AdminDashboard: React.FC = () => {
   const totalReviews = reviews?.length ?? 0;
 
   const approvedProperties =
-    properties?.filter((property) => property.approvalStatus === "Approved")
-      .length ?? 0;
-
+    properties?.filter((item) => item.approvalStatus === "Approved").length ??
+    0;
   const pendingProperties =
-    properties?.filter((property) => property.approvalStatus === "Pending")
-      .length ?? 0;
-
+    properties?.filter((item) => item.approvalStatus === "Pending").length ?? 0;
   const pendingReviews =
-    reviews?.filter((review) => review.status === "pending").length ?? 0;
-
-  const avgRating =
-    totalReviews > 0
-      ? (
-          reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) /
-          totalReviews
-        ).toFixed(1)
-      : "—";
-
-  // Portfolio value for approved listings
+    reviews?.filter((item) => item.status === "pending").length ?? 0;
+  const avgRating = totalReviews
+    ? (
+        reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) /
+        totalReviews
+      ).toFixed(1)
+    : "—";
   const totalPortfolioValue =
     properties
-      ?.filter((property) => property.approvalStatus === "Approved")
-      .reduce((sum, property) => sum + (Number(property.price) || 0), 0) ?? 0;
-
+      ?.filter((item) => item.approvalStatus === "Approved")
+      .reduce((sum, item) => sum + (Number(item.price) || 0), 0) ?? 0;
   const totalPortfolioFormatted =
     totalPortfolioValue > 0
-      ? `$${(totalPortfolioValue / 1_000_000).toFixed(2)}M`
-      : "$0";
+      ? `₹${(totalPortfolioValue / 1_000_000).toFixed(2)}M`
+      : "₹0";
 
-  // Most recent pending reviews
-  const recentPendingReviews = [...(reviews ?? [])]
-    .filter((review) => review.status === "pending")
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-    .slice(0, 3);
-
-  // Most recent pending properties
-  const recentPendingProperties = [...(properties ?? [])]
-    .filter((property) => property.approvalStatus === "Pending")
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-    .slice(0, 3);
-
-  // =====================================================
-  // QUICK ACTIONS
-  // =====================================================
+  const recentPendingReviews = useMemo(
+    () =>
+      [...(reviews ?? [])]
+        .filter((review) => review.status === "pending")
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )
+        .slice(0, 3),
+    [reviews],
+  );
+  const recentPendingProperties = useMemo(
+    () =>
+      [...(properties ?? [])]
+        .filter((property) => property.approvalStatus === "Pending")
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )
+        .slice(0, 3),
+    [properties],
+  );
 
   const quickActions: QuickAction[] = [
     {
-      icon: <People />,
-      label: "Users",
+      icon: <PeopleAlt />,
+      label: "Customers",
+      description: "Manage user accounts",
       path: "/admin/users",
-      color: "#3b82f6",
+      color: "#2563eb",
     },
     {
       icon: <Business />,
       label: "Owners",
+      description: "Owner directory",
       path: "/admin/owners",
-      color: "#0f766e",
+      color: "#087f5b",
     },
     {
       icon: <VerifiedUser />,
       label: "Agents",
+      description: "Agent accounts",
       path: "/admin/agents",
       color: "#7c3aed",
     },
     {
       icon: <Apartment />,
       label: "Approvals",
+      description: "Review property listings",
       path: "/admin/properties",
       color: "#d97706",
     },
     {
       icon: <Email />,
       label: "Inquiries",
+      description: "Customer requests",
       path: "/admin/inquiries",
       color: "#0891b2",
     },
     {
       icon: <Event />,
       label: "Appointments",
+      description: "Upcoming visits",
       path: "/admin/appointments",
       color: "#db2777",
     },
     {
       icon: <Description />,
       label: "Leases",
+      description: "Lease documents",
       path: "/admin/AllLeases",
       color: "#6366f1",
     },
     {
       icon: <ReceiptLong />,
       label: "Transactions",
+      description: "Sales and payments",
       path: "/admin/sale-transactions",
       color: "#0d9488",
     },
     {
       icon: <Star />,
       label: "Reviews",
+      description: "Customer feedback",
       path: "/admin/allreview",
       color: "#ca8a04",
     },
   ];
 
-  // =====================================================
-  // RENDER
-  // =====================================================
+  const stats: StatCardProps[] = [
+    {
+      icon: <PeopleAlt />,
+      label: "Customers",
+      value: totalCustomers,
+      color: "#2563eb",
+      path: "/admin/users",
+    },
+    {
+      icon: <Business />,
+      label: "Property owners",
+      value: totalOwners,
+      color: "#087f5b",
+      path: "/admin/owners",
+    },
+    {
+      icon: <VerifiedUser />,
+      label: "Agents",
+      value: totalAgents,
+      color: "#7c3aed",
+      path: "/admin/agents",
+    },
+    {
+      icon: <Apartment />,
+      label: "Properties",
+      value: totalProperties,
+      note: `${approvedProperties} approved listings`,
+      color: "#d97706",
+      path: "/admin/properties",
+    },
+    {
+      icon: <Email />,
+      label: "Inquiries",
+      value: totalInquiries,
+      color: "#0891b2",
+      path: "/admin/inquiries",
+    },
+    {
+      icon: <Event />,
+      label: "Appointments",
+      value: totalAppointments,
+      color: "#db2777",
+      path: "/admin/appointments",
+    },
+  ];
+
+  const today = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <Box
       sx={{
-        width: "100%",
         minHeight: "100%",
-        bgcolor: COLORS.background,
-        p: { xs: 1.5, sm: 2.5, md: 3 },
-        borderRadius: { xs: 2, md: 3 },
+        bgcolor: THEME.canvas,
+        p: { xs: 1.5, sm: 2.5, lg: 3 },
+        borderRadius: { xs: 2, md: 4 },
       }}
     >
-      {/* ================= WELCOME HEADER ================= */}
-
+      {/* Welcome banner */}
       <Paper
         elevation={0}
         sx={{
           position: "relative",
           overflow: "hidden",
           p: { xs: 2.5, sm: 3.5, md: 4 },
-          mb: 4,
-          borderRadius: "24px",
-          color: COLORS.white,
+          mb: 3.5,
+          borderRadius: 5,
+          color: "#fff",
           background:
-            "linear-gradient(120deg, #0f172a 0%, #134e4a 52%, #0f766e 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
+            "linear-gradient(115deg, #102b23 0%, #08664c 58%, #16a078 100%)",
         }}
       >
-        {/* Decorative shapes */}
         <Box
           sx={{
             position: "absolute",
-            width: 270,
-            height: 270,
+            width: 300,
+            height: 300,
+            border: "1px solid rgba(255,255,255,.15)",
             borderRadius: "50%",
-            border: "1px solid rgba(255,255,255,0.12)",
-            top: -130,
-            right: -55,
+            right: -80,
+            top: -170,
             pointerEvents: "none",
           }}
         />
-
         <Box
           sx={{
             position: "absolute",
-            width: 190,
-            height: 190,
+            width: 210,
+            height: 210,
+            bgcolor: "rgba(255,255,255,.06)",
             borderRadius: "50%",
-            bgcolor: "rgba(255,255,255,0.045)",
-            bottom: -120,
-            right: 125,
+            right: 130,
+            bottom: -155,
             pointerEvents: "none",
           }}
         />
-
-        <Box
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={3}
           sx={{
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", md: "center" },
             position: "relative",
             zIndex: 1,
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 3,
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              minWidth: 0,
-            }}
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ minWidth: 0, alignItems: "center" }}
           >
             <Avatar
               src={user?.image || undefined}
               alt={user?.name || "Admin"}
               sx={{
-                width: { xs: 55, sm: 68 },
-                height: { xs: 55, sm: 68 },
-                bgcolor: "rgba(255,255,255,0.13)",
-                color: COLORS.white,
-                fontSize: 27,
+                width: { xs: 56, sm: 70 },
+                height: { xs: 56, sm: 70 },
+                bgcolor: "rgba(255,255,255,.16)",
+                border: "2px solid rgba(255,255,255,.38)",
                 fontWeight: 800,
-                border: "2px solid rgba(255,255,255,0.35)",
-                boxShadow: "0 5px 18px rgba(0,0,0,0.12)",
+                fontSize: 26,
               }}
             >
               {user?.name?.charAt(0)?.toUpperCase() || "A"}
             </Avatar>
-
             <Box sx={{ minWidth: 0 }}>
               <Chip
                 icon={<AdminPanelSettings />}
@@ -542,332 +553,229 @@ const AdminDashboard: React.FC = () => {
                 size="small"
                 sx={{
                   mb: 1,
-                  bgcolor: "rgba(209,250,229,0.14)",
-                  color: "#d1fae5",
+                  bgcolor: "rgba(255,255,255,.14)",
+                  color: "#d9fff0",
                   fontWeight: 800,
-                  fontSize: "0.67rem",
-                  letterSpacing: "1px",
-                  "& .MuiChip-icon": {
-                    color: "#a7f3d0",
-                    fontSize: 16,
-                  },
+                  letterSpacing: 1,
+                  fontSize: ".65rem",
+                  "& .MuiChip-icon": { color: "#b8f5dc" },
                 }}
               />
-
               <Typography
                 sx={{
-                  fontSize: { xs: "1.55rem", sm: "2rem", md: "2.25rem" },
-                  fontWeight: 800,
-                  lineHeight: 1.15,
-                  letterSpacing: "-0.9px",
+                  fontWeight: 850,
+                  letterSpacing: "-1px",
+                  fontSize: { xs: "1.65rem", sm: "2.2rem", md: "2.5rem" },
+                  lineHeight: 1.12,
                 }}
               >
                 Welcome{user?.name ? `, ${user.name}` : " back"}!
               </Typography>
-
               <Typography
                 sx={{
                   mt: 1,
-                  fontSize: { xs: "0.8rem", sm: "0.9rem" },
-                  color: "rgba(255,255,255,0.76)",
-                  lineHeight: 1.6,
+                  color: "rgba(255,255,255,.78)",
+                  fontSize: ".9rem",
                 }}
               >
-                Manage your real-estate platform from one place.
+                Your real-estate operations, all in one place.
               </Typography>
-
               <Typography
                 sx={{
                   mt: 1.2,
-                  fontSize: "0.78rem",
-                  color: "#a7f3d0",
-                  fontWeight: 600,
+                  color: "#b8f5dc",
+                  fontWeight: 650,
+                  fontSize: ".78rem",
                 }}
               >
-                {new Date().toLocaleDateString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {today}
               </Typography>
             </Box>
-          </Box>
-
-          <Box
+          </Stack>
+          <Stack
             sx={{
-              display: "flex",
+              flexDirection: "row",
               flexWrap: "wrap",
-              gap: 1.2,
+              gap: 1,
             }}
           >
             {pendingProperties > 0 && (
               <Chip
-                icon={<Pending />}
-                label={`${pendingProperties} Pending Properties`}
+                icon={<PendingActions />}
+                label={`${pendingProperties} property approvals`}
                 onClick={() => navigate("/admin/properties")}
                 sx={{
-                  height: 38,
-                  bgcolor: "rgba(255,255,255,0.13)",
-                  color: COLORS.white,
+                  bgcolor: "rgba(255,255,255,.14)",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,.18)",
                   fontWeight: 700,
                   cursor: "pointer",
-                  border: "1px solid rgba(255,255,255,0.17)",
-                  "& .MuiChip-icon": { color: "#fde68a" },
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.22)" },
+                  "& .MuiChip-icon": { color: "#ffe29a" },
+                  "&:hover": { bgcolor: "rgba(255,255,255,.22)" },
                 }}
               />
             )}
-
             {pendingReviews > 0 && (
               <Chip
-                icon={<RateReview />}
-                label={`${pendingReviews} Pending Reviews`}
+                icon={<NotificationsActive />}
+                label={`${pendingReviews} reviews to check`}
                 onClick={() => navigate("/admin/allreview")}
                 sx={{
-                  height: 38,
-                  bgcolor: "rgba(255,255,255,0.13)",
-                  color: COLORS.white,
+                  bgcolor: "rgba(255,255,255,.14)",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,.18)",
                   fontWeight: 700,
                   cursor: "pointer",
-                  border: "1px solid rgba(255,255,255,0.17)",
-                  "& .MuiChip-icon": { color: "#fde68a" },
-                  "&:hover": { bgcolor: "rgba(255,255,255,0.22)" },
+                  "& .MuiChip-icon": { color: "#ffe29a" },
+                  "&:hover": { bgcolor: "rgba(255,255,255,.22)" },
                 }}
               />
             )}
-          </Box>
-        </Box>
+          </Stack>
+        </Stack>
       </Paper>
 
-      {/* ================= PLATFORM OVERVIEW ================= */}
-
-      <SectionHeading
-        title="Platform Overview"
-        subtitle="A snapshot of your real-estate platform."
-        icon={<TrendingUp />}
+      {/* Platform overview */}
+      <SectionTitle
+        title="Platform overview"
+        subtitle="A live snapshot of your real-estate platform."
+        icon={<DashboardRounded />}
       />
-
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 2,
-          mb: 4,
-          "& > *": {
-            width: {
-              xs: "calc(50% - 8px)",
-              sm: "calc(33.333% - 11px)",
-              lg: "calc(16.6667% - 14px)",
-            },
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(2, minmax(0, 1fr))",
+            sm: "repeat(3, minmax(0, 1fr))",
+            xl: "repeat(6, minmax(0, 1fr))",
           },
+          gap: 1.7,
+          mb: 3.5,
         }}
       >
-        <StatCard
-          icon={<People />}
-          label="Customers"
-          value={totalCustomers}
-          color="#2563eb"
-          path="/admin/users"
-        />
-
-        <StatCard
-          icon={<Business />}
-          label="Owners"
-          value={totalOwners}
-          color="#0f766e"
-          path="/admin/owners"
-        />
-
-        <StatCard
-          icon={<VerifiedUser />}
-          label="Agents"
-          value={totalAgents}
-          color="#7c3aed"
-          path="/admin/agents"
-        />
-
-        <StatCard
-          icon={<Apartment />}
-          label="Properties"
-          value={totalProperties}
-          subtitle={`${approvedProperties} approved`}
-          color="#d97706"
-          path="/admin/properties"
-        />
-
-        <StatCard
-          icon={<Email />}
-          label="Inquiries"
-          value={totalInquiries}
-          color="#0891b2"
-          path="/admin/inquiries"
-        />
-
-        <StatCard
-          icon={<Event />}
-          label="Appointments"
-          value={totalAppointments}
-          color="#db2777"
-          path="/admin/appointments"
-        />
+        {stats.map((stat) => (
+          <StatCard key={stat.label} {...stat} />
+        ))}
       </Box>
 
-      {/* ================= BUSINESS METRICS ================= */}
-
-      <SectionHeading
-        title="Business Metrics"
-        subtitle="Property value, approvals and customer feedback."
-        icon={<AttachMoney />}
+      {/* Business metrics */}
+      <SectionTitle
+        title="Business insights"
+        subtitle="Property portfolio and customer feedback at a glance."
+        icon={<TrendingUp />}
       />
-
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 2,
-          mb: 4,
-          "& > *": {
-            width: {
-              xs: "calc(50% - 8px)",
-              sm: "calc(50% - 8px)",
-              md: "calc(25% - 12px)",
-            },
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "repeat(2, minmax(0, 1fr))",
+            md: "repeat(4, minmax(0, 1fr))",
           },
+          gap: 1.7,
+          mb: 3.5,
         }}
       >
         <StatCard
-          icon={<AttachMoney />}
-          label="Portfolio Value"
+          icon={<CurrencyRupee />}
+          label="Portfolio value"
           value={totalPortfolioFormatted}
-          subtitle="Approved listings value"
+          note="Approved listing value"
           color="#059669"
           path="/admin/properties"
         />
-
         <StatCard
-          icon={<Pending />}
-          label="Pending Approvals"
+          icon={<PendingActions />}
+          label="Pending approvals"
           value={pendingProperties}
-          subtitle="Awaiting review"
+          note="Awaiting admin review"
           color="#d97706"
           path="/admin/properties"
         />
-
         <StatCard
           icon={<ReceiptLong />}
-          label="Sale Offers"
+          label="Sale offers"
           value={totalOffers}
-          subtitle="Platform-wide offers"
+          note="Platform-wide offers"
           color="#6366f1"
           path="/admin/sale-transactions"
         />
-
         <StatCard
           icon={<Star />}
-          label="Average Rating"
+          label="Average rating"
           value={avgRating}
-          subtitle={`${totalReviews} total reviews`}
+          note={`${totalReviews} total reviews`}
           color="#ca8a04"
           path="/admin/allreview"
         />
       </Box>
 
-      {/* ================= MODERATION QUEUE ================= */}
-
-      <SectionHeading
-        title="Moderation Center"
-        subtitle="Review pending listings and customer feedback."
+      {/* Moderation queue */}
+      <SectionTitle
+        title="Moderation center"
+        subtitle="Handle items that need your attention."
         icon={<CheckCircle />}
       />
-
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "stretch",
-          gap: 2.5,
-          mb: 4,
-          "& > *": {
-            width: { xs: "100%", lg: "calc(50% - 10px)" },
-            minWidth: 0,
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "minmax(0, 1fr)",
+            lg: "repeat(2, minmax(0, 1fr))",
           },
+          gap: 2,
+          mb: 3.5,
         }}
       >
-        {/* PENDING PROPERTIES */}
-
-        <Paper
-          elevation={0}
-          sx={{
-            p: { xs: 2, sm: 2.7 },
-            borderRadius: "20px",
-            border: `1px solid ${COLORS.border}`,
-            bgcolor: COLORS.white,
-          }}
-        >
-          <Box
+        <Paper elevation={0} sx={panelSx}>
+          <Stack
+            direction="row"
+            spacing={1}
             sx={{
-              display: "flex",
-              flexWrap: "wrap",
+              mb: 1.4,
               justifyContent: "space-between",
               alignItems: "center",
-              gap: 1.5,
-              mb: 2,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
               <Box
                 sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "12px",
-                  bgcolor: "#fffbeb",
-                  color: "#d97706",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  width: 42,
+                  height: 42,
+                  borderRadius: 3,
+                  bgcolor: "#fff4dc",
+                  color: "#bd7600",
+                  display: "grid",
+                  placeItems: "center",
                 }}
               >
-                <Apartment />
+                <HomeWork />
               </Box>
-
               <Box>
-                <Typography
-                  sx={{ fontWeight: 800, color: COLORS.navy, fontSize: "1rem" }}
-                >
-                  Properties Awaiting Approval
+                <Typography sx={{ fontWeight: 800, color: THEME.ink }}>
+                  Property approvals
                 </Typography>
-                <Typography sx={{ fontSize: "0.75rem", color: COLORS.slate }}>
-                  Check new property submissions
+                <Typography sx={{ color: THEME.muted, fontSize: ".76rem" }}>
+                  Recently submitted listings
                 </Typography>
               </Box>
-            </Box>
-
-            {pendingProperties > 0 && (
-              <Chip
-                label={pendingProperties}
-                size="small"
-                sx={{
-                  bgcolor: "#fef3c7",
-                  color: "#92400e",
-                  fontWeight: 800,
-                }}
-              />
-            )}
-          </Box>
-
-          <Divider sx={{ borderColor: "#edf2f7", mb: 1 }} />
-
+            </Stack>
+            <Chip
+              label={pendingProperties}
+              size="small"
+              sx={{ bgcolor: "#fff4dc", color: "#9a5c00", fontWeight: 800 }}
+            />
+          </Stack>
+          <Divider sx={{ borderColor: THEME.border }} />
           {loadingProperties && recentPendingProperties.length === 0 ? (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, py: 1 }}>
+            <Stack spacing={1.2} sx={{ py: 2 }}>
               {[1, 2, 3].map((item) => (
-                <Skeleton key={item} variant="rounded" height={65} />
+                <Skeleton key={item} variant="rounded" height={64} />
               ))}
-            </Box>
+            </Stack>
           ) : recentPendingProperties.length === 0 ? (
             <EmptyState
               icon={<CheckCircle />}
-              message="All properties have been reviewed!"
+              message="You're all caught up. No pending properties."
             />
           ) : (
             <List disablePadding>
@@ -876,12 +784,11 @@ const AdminDashboard: React.FC = () => {
                   key={property._id}
                   disableGutters
                   sx={{
-                    py: 1.6,
+                    py: 1.5,
                     gap: 1,
-                    alignItems: "center",
                     borderBottom:
                       index < recentPendingProperties.length - 1
-                        ? "1px solid #edf2f7"
+                        ? `1px solid ${THEME.border}`
                         : "none",
                   }}
                 >
@@ -892,26 +799,23 @@ const AdminDashboard: React.FC = () => {
                       sx={{
                         width: 44,
                         height: 44,
-                        bgcolor: "#fef3c7",
-                        color: "#b45309",
-                        borderRadius: "12px",
+                        borderRadius: 2.5,
+                        bgcolor: "#fff4dc",
+                        color: "#bd7600",
                       }}
                     >
                       <Apartment />
                     </Avatar>
                   </ListItemAvatar>
-
                   <ListItemText
                     sx={{ minWidth: 0, mr: 0.5 }}
                     primary={
                       <Typography
+                        noWrap
                         sx={{
-                          fontSize: "0.87rem",
-                          fontWeight: 800,
-                          color: COLORS.navy,
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
+                          color: THEME.ink,
+                          fontWeight: 750,
+                          fontSize: ".86rem",
                         }}
                       >
                         {property.title}
@@ -920,33 +824,28 @@ const AdminDashboard: React.FC = () => {
                     secondary={
                       <Typography
                         sx={{
-                          fontSize: "0.75rem",
-                          color: COLORS.slate,
-                          mt: 0.4,
+                          mt: 0.35,
+                          color: THEME.muted,
+                          fontSize: ".75rem",
                         }}
                       >
-                        {property.propertyType} • $
-                        {Number(property.price || 0).toLocaleString()}
+                        {property.propertyType} · ₹
+                        {Number(property.price || 0).toLocaleString("en-IN")}
                       </Typography>
                     }
                   />
-
                   <Button
                     size="small"
                     variant="contained"
                     onClick={() => navigate("/admin/properties")}
                     sx={{
                       flexShrink: 0,
-                      borderRadius: "9px",
+                      borderRadius: 2,
                       textTransform: "none",
-                      fontWeight: 700,
-                      fontSize: "0.75rem",
-                      bgcolor: "#d97706",
+                      fontWeight: 750,
+                      bgcolor: "#b77908",
                       boxShadow: "none",
-                      "&:hover": {
-                        bgcolor: "#b45309",
-                        boxShadow: "none",
-                      },
+                      "&:hover": { bgcolor: "#925f05", boxShadow: "none" },
                     }}
                   >
                     Review
@@ -955,7 +854,6 @@ const AdminDashboard: React.FC = () => {
               ))}
             </List>
           )}
-
           <Button
             fullWidth
             endIcon={<ArrowForward />}
@@ -963,86 +861,62 @@ const AdminDashboard: React.FC = () => {
             sx={{
               mt: 1.5,
               py: 1,
-              borderRadius: "10px",
+              borderRadius: 2.5,
+              bgcolor: THEME.greenSoft,
+              color: THEME.greenDark,
               textTransform: "none",
-              fontWeight: 700,
-              color: COLORS.emerald,
-              bgcolor: COLORS.mint,
-              "&:hover": { bgcolor: "#d1fae5" },
+              fontWeight: 800,
+              "&:hover": { bgcolor: "#d6f1e4" },
             }}
           >
-            View All Properties
+            View all properties
           </Button>
         </Paper>
 
-        {/* PENDING REVIEWS */}
-
-        <Paper
-          elevation={0}
-          sx={{
-            p: { xs: 2, sm: 2.7 },
-            borderRadius: "20px",
-            border: `1px solid ${COLORS.border}`,
-            bgcolor: COLORS.white,
-          }}
-        >
-          <Box
+        <Paper elevation={0} sx={panelSx}>
+          <Stack
+            direction="row"
+            spacing={1}
             sx={{
-              display: "flex",
-              flexWrap: "wrap",
+              mb: 1.4,
               justifyContent: "space-between",
               alignItems: "center",
-              gap: 1.5,
-              mb: 2,
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
               <Box
                 sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "12px",
-                  bgcolor: "#fffbeb",
-                  color: "#ca8a04",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  width: 42,
+                  height: 42,
+                  borderRadius: 3,
+                  bgcolor: "#fff5d9",
+                  color: "#ad7900",
+                  display: "grid",
+                  placeItems: "center",
                 }}
               >
-                <Star />
+                <RateReview />
               </Box>
-
               <Box>
-                <Typography
-                  sx={{ fontWeight: 800, color: COLORS.navy, fontSize: "1rem" }}
-                >
-                  Reviews Awaiting Moderation
+                <Typography sx={{ fontWeight: 800, color: THEME.ink }}>
+                  Review moderation
                 </Typography>
-                <Typography sx={{ fontSize: "0.75rem", color: COLORS.slate }}>
-                  Check customer feedback
+                <Typography sx={{ color: THEME.muted, fontSize: ".76rem" }}>
+                  Latest customer feedback
                 </Typography>
               </Box>
-            </Box>
-
-            {pendingReviews > 0 && (
-              <Chip
-                label={pendingReviews}
-                size="small"
-                sx={{
-                  bgcolor: "#fef3c7",
-                  color: "#92400e",
-                  fontWeight: 800,
-                }}
-              />
-            )}
-          </Box>
-
-          <Divider sx={{ borderColor: "#edf2f7", mb: 1 }} />
-
+            </Stack>
+            <Chip
+              label={pendingReviews}
+              size="small"
+              sx={{ bgcolor: "#fff4dc", color: "#9a5c00", fontWeight: 800 }}
+            />
+          </Stack>
+          <Divider sx={{ borderColor: THEME.border }} />
           {recentPendingReviews.length === 0 ? (
             <EmptyState
               icon={<CheckCircle />}
-              message="All reviews have been moderated!"
+              message="You're all caught up. No pending reviews."
             />
           ) : (
             <List disablePadding>
@@ -1053,18 +927,16 @@ const AdminDashboard: React.FC = () => {
                   "name" in review.user
                     ? String(review.user.name || "Customer")
                     : "Customer";
-
                 return (
                   <ListItem
                     key={review._id}
                     disableGutters
                     sx={{
-                      py: 1.6,
+                      py: 1.5,
                       gap: 1,
-                      alignItems: "center",
                       borderBottom:
                         index < recentPendingReviews.length - 1
-                          ? "1px solid #edf2f7"
+                          ? `1px solid ${THEME.border}`
                           : "none",
                     }}
                   >
@@ -1073,28 +945,25 @@ const AdminDashboard: React.FC = () => {
                         sx={{
                           width: 44,
                           height: 44,
-                          borderRadius: "12px",
-                          bgcolor: "#fef3c7",
-                          color: "#a16207",
+                          borderRadius: 2.5,
+                          bgcolor: "#fff4dc",
+                          color: "#9a6b00",
                           fontWeight: 800,
-                          fontSize: "0.85rem",
+                          fontSize: ".8rem",
                         }}
                       >
                         {Number(review.rating || 0).toFixed(1)}★
                       </Avatar>
                     </ListItemAvatar>
-
                     <ListItemText
                       sx={{ minWidth: 0, mr: 0.5 }}
                       primary={
                         <Typography
+                          noWrap
                           sx={{
-                            fontSize: "0.87rem",
-                            fontWeight: 800,
-                            color: COLORS.navy,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
+                            color: THEME.ink,
+                            fontWeight: 750,
+                            fontSize: ".86rem",
                           }}
                         >
                           {review.comment || "No written comment"}
@@ -1103,33 +972,30 @@ const AdminDashboard: React.FC = () => {
                       secondary={
                         <Typography
                           sx={{
-                            fontSize: "0.75rem",
-                            color: COLORS.slate,
-                            mt: 0.4,
+                            mt: 0.35,
+                            color: THEME.muted,
+                            fontSize: ".75rem",
                           }}
                         >
-                          {reviewerName} •{" "}
-                          {new Date(review.createdAt).toLocaleDateString()}
+                          {reviewerName} ·{" "}
+                          {new Date(review.createdAt).toLocaleDateString(
+                            "en-IN",
+                          )}
                         </Typography>
                       }
                     />
-
                     <Button
                       size="small"
                       variant="contained"
                       onClick={() => navigate("/admin/allreview")}
                       sx={{
                         flexShrink: 0,
-                        borderRadius: "9px",
+                        borderRadius: 2,
                         textTransform: "none",
-                        fontWeight: 700,
-                        fontSize: "0.75rem",
-                        bgcolor: "#d97706",
+                        fontWeight: 750,
+                        bgcolor: "#b77908",
                         boxShadow: "none",
-                        "&:hover": {
-                          bgcolor: "#b45309",
-                          boxShadow: "none",
-                        },
+                        "&:hover": { bgcolor: "#925f05", boxShadow: "none" },
                       }}
                     >
                       Review
@@ -1139,7 +1005,6 @@ const AdminDashboard: React.FC = () => {
               })}
             </List>
           )}
-
           <Button
             fullWidth
             endIcon={<ArrowForward />}
@@ -1147,49 +1012,35 @@ const AdminDashboard: React.FC = () => {
             sx={{
               mt: 1.5,
               py: 1,
-              borderRadius: "10px",
+              borderRadius: 2.5,
+              bgcolor: THEME.greenSoft,
+              color: THEME.greenDark,
               textTransform: "none",
-              fontWeight: 700,
-              color: COLORS.emerald,
-              bgcolor: COLORS.mint,
-              "&:hover": { bgcolor: "#d1fae5" },
+              fontWeight: 800,
+              "&:hover": { bgcolor: "#d6f1e4" },
             }}
           >
-            View All Reviews
+            View all reviews
           </Button>
         </Paper>
       </Box>
 
-      {/* ================= QUICK ACTIONS ================= */}
-
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 2, sm: 3 },
-          borderRadius: "20px",
-          border: `1px solid ${COLORS.border}`,
-          bgcolor: COLORS.white,
-        }}
-      >
-        <SectionHeading
-          title="Quick Actions"
-          subtitle="Jump directly to frequently used admin sections."
+      {/* Quick actions */}
+      <Paper elevation={0} sx={panelSx}>
+        <SectionTitle
+          title="Quick actions"
+          subtitle="Go straight to the tools you use most."
           icon={<Schedule />}
         />
-
         <Box
           sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1.5,
-            "& > *": {
-              width: {
-                xs: "calc(50% - 6px)",
-                sm: "calc(33.333% - 10px)",
-                md: "calc(25% - 12px)",
-                lg: "calc(20% - 12px)",
-              },
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "repeat(2, minmax(0, 1fr))",
+              sm: "repeat(3, minmax(0, 1fr))",
+              lg: "repeat(5, minmax(0, 1fr))",
             },
+            gap: 1.4,
           }}
         >
           {quickActions.map((action) => (
@@ -1199,74 +1050,61 @@ const AdminDashboard: React.FC = () => {
               sx={{
                 minWidth: 0,
                 cursor: "pointer",
-                borderRadius: "15px",
-                border: `1px solid ${COLORS.border}`,
+                border: `1px solid ${THEME.border}`,
+                borderRadius: 3,
                 boxShadow: "none",
-                transition: "all 0.2s ease",
+                transition: "all .2s ease",
                 "&:hover": {
                   transform: "translateY(-3px)",
                   borderColor: action.color,
-                  boxShadow: "0 8px 20px rgba(15, 23, 42, 0.06)",
-                  bgcolor: "#fcfefd",
+                  bgcolor: "#fbfdfc",
+                  boxShadow: "0 8px 20px rgba(20,35,31,.06)",
                 },
               }}
             >
-              <CardContent
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.3,
-                  p: { xs: 1.5, sm: 1.8 },
-                  "&:last-child": { pb: { xs: 1.5, sm: 1.8 } },
-                }}
-              >
-                <Box
+              <CardContent sx={{ p: 1.7, "&:last-child": { pb: 1.7 } }}>
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{ alignItems: "center", justifyContent: "space-between" }}
+                >
+                  <Box
+                    sx={{
+                      width: 42,
+                      height: 42,
+                      flexShrink: 0,
+                      display: "grid",
+                      placeItems: "center",
+                      borderRadius: 2.5,
+                      bgcolor: `${action.color}16`,
+                      color: action.color,
+                      "& svg": { fontSize: 22 },
+                    }}
+                  >
+                    {action.icon}
+                  </Box>
+                  <ArrowForward sx={{ color: "#a6b3ad", fontSize: 18 }} />
+                </Stack>
+                <Typography
                   sx={{
-                    width: 42,
-                    height: 42,
-                    flexShrink: 0,
-                    borderRadius: "12px",
-                    bgcolor: `${action.color}15`,
-                    color: action.color,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    "& svg": { fontSize: 22 },
+                    mt: 1.5,
+                    color: THEME.ink,
+                    fontWeight: 800,
+                    fontSize: ".86rem",
                   }}
                 >
-                  {action.icon}
-                </Box>
-
-                <Box sx={{ minWidth: 0, flexGrow: 1 }}>
-                  <Typography
-                    sx={{
-                      fontSize: "0.82rem",
-                      fontWeight: 800,
-                      color: COLORS.navy,
-                      overflowWrap: "anywhere",
-                    }}
-                  >
-                    {action.label}
-                  </Typography>
-
-                  <Typography
-                    sx={{
-                      mt: 0.3,
-                      fontSize: "0.7rem",
-                      color: COLORS.slate,
-                    }}
-                  >
-                    Open section
-                  </Typography>
-                </Box>
-
-                <ArrowForward
+                  {action.label}
+                </Typography>
+                <Typography
                   sx={{
-                    flexShrink: 0,
-                    fontSize: 17,
-                    color: "#94a3b8",
+                    mt: 0.4,
+                    color: THEME.muted,
+                    fontSize: ".72rem",
+                    lineHeight: 1.45,
                   }}
-                />
+                >
+                  {action.description}
+                </Typography>
               </CardContent>
             </Card>
           ))}

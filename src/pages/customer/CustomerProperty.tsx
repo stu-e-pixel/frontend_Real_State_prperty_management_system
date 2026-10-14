@@ -22,7 +22,6 @@ import {
   Bed,
   Bathtub,
   SquareFoot,
-  AttachMoney,
   CheckCircle,
   Home,
 } from "@mui/icons-material";
@@ -498,7 +497,7 @@ const CustomerProperty: React.FC = () => {
                     bgcolor: "#ecfdf5",
                   }}
                 >
-                  <AttachMoney sx={{ color: "#047857" }} />
+                  
 
                   <Typography
                     variant="h6"
@@ -508,7 +507,7 @@ const CustomerProperty: React.FC = () => {
                       fontSize: "1.2rem",
                     }}
                   >
-                    {Number(p.price).toLocaleString("en-IN")}
+                   ₹{Number(p.price).toLocaleString("en-IN")}
                   </Typography>
 
                   <Typography

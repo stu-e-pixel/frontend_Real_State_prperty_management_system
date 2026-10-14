@@ -34,7 +34,6 @@ import {
   Edit,
   Block,
   Schedule,
-  AttachMoney,
   Timer,
   Email,
   Phone,
@@ -69,6 +68,7 @@ import type {
 } from "../../typescript/type/lease.types";
 import type { PopulatedUserLite } from "../../typescript/type/inquiry.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 const STATUS_COLORS: Record<
   string,
@@ -618,7 +618,7 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
                           gap: 1,
                         }}
                       >
-                        <AttachMoney fontSize="small" color="action" />
+                        <IndianRupee fontSize="small" color="action" />
 
                         <Typography
                           variant="caption"
@@ -626,7 +626,7 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
                             fontWeight: 600,
                           }}
                         >
-                          ${l.monthlyRent.toLocaleString()}
+                          ₹{l.monthlyRent.toLocaleString()}
                           /month
                         </Typography>
                       </Box>
@@ -641,7 +641,7 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
                         <Timer fontSize="small" color="action" />
 
                         <Typography variant="caption">
-                          Deposit: ${l.securityDeposit.toLocaleString()}
+                          Deposit: ₹{l.securityDeposit.toLocaleString()}
                         </Typography>
                       </Box>
                     </Box>
@@ -909,7 +909,7 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
                 </Typography>
 
                 <Typography variant="body1">
-                  ${lease.monthlyRent.toLocaleString()}
+                  ₹{lease.monthlyRent.toLocaleString()}
                 </Typography>
               </Box>
 
@@ -921,7 +921,7 @@ const ManageLeases: React.FC<ManageLeasesProps> = ({ mode }) => {
                 </Typography>
 
                 <Typography variant="body1">
-                  ${lease.securityDeposit.toLocaleString()}
+                  ₹{lease.securityDeposit.toLocaleString()}
                 </Typography>
               </Box>
 

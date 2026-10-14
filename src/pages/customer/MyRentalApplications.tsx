@@ -28,7 +28,6 @@ import {
   Visibility,
   Cancel,
   Edit,
-  AttachMoney,
   Work,
   Person,
 } from "@mui/icons-material";
@@ -51,6 +50,7 @@ import type {
   RentalApplicationFormValues,
 } from "../../typescript/type/rental.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 const STATUS_COLORS: Record<
   string,
@@ -402,10 +402,10 @@ const MyRentalApplications: React.FC = () => {
                           gap: 1,
                         }}
                       >
-                        <AttachMoney fontSize="small" color="action" />
+                        <IndianRupee fontSize="small" color="action" />
 
                         <Typography variant="body2">
-                          Monthly income: ${a.monthlyIncome.toLocaleString()}
+                          Monthly income: ₹{a.monthlyIncome.toLocaleString()}
                         </Typography>
                       </Box>
 
@@ -606,7 +606,7 @@ const MyRentalApplications: React.FC = () => {
                 </Typography>
 
                 <Typography variant="body1">
-                  ${application.monthlyIncome.toLocaleString()}
+                  ₹{application.monthlyIncome.toLocaleString()}
                 </Typography>
               </Box>
 

@@ -57,6 +57,7 @@ import AboutPage from "../pages/AboutPage";
 import ContactPage from "../pages/ContactPage";
 import PublicPropertyDetailsPage from "../pages/Service";
 import LandingLayout from "../layout/landing/landingLayout";
+import AllNotifications from "../components/notification/AllNotifications";
 
 const Routes = createBrowserRouter([
   {
@@ -167,6 +168,10 @@ const Routes = createBrowserRouter([
             element: <PropertySearch />,
           },
           {
+            path:"notifications",
+            element:<AllNotifications/>
+          },
+          {
             path:"profile",
             element:<AdminProfile/>
           }
@@ -239,6 +244,10 @@ const Routes = createBrowserRouter([
             path: "reviewmanage",
             element: <ManagePropertyReviews mode="owner" />,
           },
+          {
+            path:"notifications",
+            element:<AllNotifications/>
+          },
         ],
       },
     ],
@@ -301,6 +310,10 @@ const Routes = createBrowserRouter([
             path: "reviewmanage",
             element: <ManagePropertyReviews mode="agent" />,
           },
+          {
+            path:"notifications",
+            element:<AllNotifications/>
+          },
         ],
       },
     ],
@@ -360,6 +373,10 @@ const Routes = createBrowserRouter([
           {
             path: "allreview",
             element: <AdminReviews />,
+          },
+          {
+            path:"notifications",
+            element:<AllNotifications/>
           },
         ],
       },

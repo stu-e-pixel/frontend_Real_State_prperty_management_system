@@ -27,7 +27,6 @@ import {
   Home,
   Visibility,
   Event,
-  AttachMoney,
   Timer,
 } from "@mui/icons-material";
 
@@ -40,6 +39,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 const STATUS_COLORS: Record<
   string,
@@ -331,7 +331,7 @@ const MyLeases: React.FC = () => {
                           gap: 1,
                         }}
                       >
-                        <AttachMoney fontSize="small" color="action" />
+                        <IndianRupee fontSize="small" color="action" />
 
                         <Typography
                           variant="body2"
@@ -339,7 +339,7 @@ const MyLeases: React.FC = () => {
                             fontWeight: 600,
                           }}
                         >
-                          ${l.monthlyRent.toLocaleString()}/month
+                          ₹{l.monthlyRent.toLocaleString()}/month
                         </Typography>
                       </Box>
 
@@ -353,7 +353,7 @@ const MyLeases: React.FC = () => {
                         <Timer fontSize="small" color="action" />
 
                         <Typography variant="body2">
-                          Deposit: ${l.securityDeposit.toLocaleString()}
+                          Deposit: ₹{l.securityDeposit.toLocaleString()}
                         </Typography>
                       </Box>
                     </Box>
@@ -475,7 +475,7 @@ const MyLeases: React.FC = () => {
                 </Typography>
 
                 <Typography variant="body1">
-                  ${lease.monthlyRent.toLocaleString()}
+                  ₹{lease.monthlyRent.toLocaleString()}
                 </Typography>
               </Box>
 
@@ -486,7 +486,7 @@ const MyLeases: React.FC = () => {
                 </Typography>
 
                 <Typography variant="body1">
-                  ${lease.securityDeposit.toLocaleString()}
+                  ₹{lease.securityDeposit.toLocaleString()}
                 </Typography>
               </Box>
 

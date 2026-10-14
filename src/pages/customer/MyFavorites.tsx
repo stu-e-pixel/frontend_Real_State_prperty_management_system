@@ -23,7 +23,6 @@ import {
   Bed,
   Bathtub,
   SquareFoot,
-  AttachMoney,
 } from "@mui/icons-material";
 
 import MainLayout from "../../components/layout/MainLayout";
@@ -34,6 +33,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import type { Favorite } from "../../typescript/type/favorite.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // TYPE GUARD
@@ -99,7 +99,7 @@ const MyFavorites = () => {
   // =====================================================
 
   const formatCurrency = (amount: number): string =>
-    `$${(amount ?? 0).toLocaleString()}`;
+    `₹${(amount ?? 0).toLocaleString()}`;
 
   // =====================================================
   // RENDER
@@ -400,9 +400,9 @@ const MyFavorites = () => {
                           gap: 0.5,
                         }}
                       >
-                        <AttachMoney
+                        <IndianRupee
                           fontSize="small"
-                          sx={{ color: "success.main" }}
+                          color="success.main"
                         />
 
                         <Typography

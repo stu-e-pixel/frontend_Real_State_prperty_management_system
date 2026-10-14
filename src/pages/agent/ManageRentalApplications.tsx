@@ -28,7 +28,6 @@ import {
   Visibility,
   CheckCircle,
   Cancel,
-  AttachMoney,
   Work,
   Person,
   Email,
@@ -61,6 +60,7 @@ import type {
 
 import type { PopulatedUserLite } from "../../typescript/type/inquiry.types";
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // STATUS COLORS
@@ -424,9 +424,9 @@ const ManageRentalApplications: React.FC<ManageRentalApplicationsProps> = ({
                           gap: 1,
                         }}
                       >
-                        <AttachMoney fontSize="small" color="action" />
+                        <IndianRupee fontSize="small" color="action" />
                         <Typography variant="caption">
-                          Income: ${a.monthlyIncome.toLocaleString()}
+                          Income: ₹{a.monthlyIncome.toLocaleString()}
                         </Typography>
                       </Box>
 
@@ -660,7 +660,7 @@ const ManageRentalApplications: React.FC<ManageRentalApplicationsProps> = ({
                   Monthly Income
                 </Typography>
                 <Typography variant="body1">
-                  ${application.monthlyIncome.toLocaleString()}
+                  ₹{application.monthlyIncome.toLocaleString()}
                 </Typography>
               </Box>
 

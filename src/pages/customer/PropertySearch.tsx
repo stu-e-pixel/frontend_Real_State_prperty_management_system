@@ -34,7 +34,6 @@ import {
   Bed,
   Bathtub,
   SquareFoot,
-  AttachMoney,
   Home,
   CheckCircle,
 } from "@mui/icons-material";
@@ -51,6 +50,7 @@ import {
 } from "../../hooks/useAppDispatch";
 
 import type { Property } from "../../typescript/type/property.types";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // DEBOUNCE HOOK
@@ -849,9 +849,9 @@ const PropertySearch: React.FC = () => {
                                 bgcolor: "#ecfdf5",
                               }}
                             >
-                              <AttachMoney
+                              <IndianRupee
                                 fontSize="small"
-                                sx={{ color: "#047857" }}
+                                color="#047857"
                               />
 
                               <Typography

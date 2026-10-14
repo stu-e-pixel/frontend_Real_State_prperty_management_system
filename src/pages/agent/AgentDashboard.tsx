@@ -26,7 +26,6 @@ import {
   ReceiptLong,
   Star,
   ArrowForward,
-  AttachMoney,
   CheckCircle,
   TrendingUp,
   HomeWork,
@@ -41,6 +40,7 @@ import { getAgentInquiries } from "../../features/inquiry/inquirySlice";
 import { getAgentAppointments } from "../../features/appointment/appointmentSlice";
 import { getSaleOfferByAgent } from "../../features/saleOffer/saleOfferSlice";
 import { getAgentReviews } from "../../features/review/reviewSlice";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // TYPES
@@ -373,8 +373,8 @@ const AgentDashboard: React.FC = () => {
 
   const totalValueFormatted =
     totalValue > 0
-      ? `$${(totalValue / 1_000_000).toFixed(2)}M`
-      : "$0";
+      ? `₹${(totalValue / 1_000_000).toFixed(2)}M`
+      : "₹0";
 
   // Inquiry statistics
   const totalInquiries = inquiryList.length;
@@ -473,7 +473,7 @@ const AgentDashboard: React.FC = () => {
   // Secondary statistics
   const secondaryStats: StatCardProps[] = [
     {
-      icon: <AttachMoney />,
+      icon: <IndianRupee />,
       label: "Portfolio Value",
       value: totalValueFormatted,
       subtitle: "Combined assigned property value",

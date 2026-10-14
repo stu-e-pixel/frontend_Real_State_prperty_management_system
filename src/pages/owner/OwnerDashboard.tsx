@@ -25,7 +25,6 @@ import {
   ReceiptLong,
   Star,
   ArrowForward,
-  AttachMoney,
   Add,
   TrendingUp,
   HomeWork,
@@ -39,6 +38,7 @@ import { getOwnerInquiries } from "../../features/inquiry/inquirySlice";
 import { getOwnerAppointments } from "../../features/appointment/appointmentSlice";
 import { getSaleOfferByOwner } from "../../features/saleOffer/saleOfferSlice";
 import { getOwnerReviews } from "../../features/review/reviewSlice";
+import { IndianRupee } from "lucide-react";
 
 // =====================================================
 // TYPES
@@ -81,7 +81,7 @@ const formatDate = (date: string | Date | undefined) => {
 const formatCurrency = (amount: number | string | undefined) => {
   const value = Number(amount);
 
-  return `$${(Number.isFinite(value) ? value : 0).toLocaleString("en-US")}`;
+  return `₹${(Number.isFinite(value) ? value : 0).toLocaleString("en-US")}`;
 };
 
 const getInitial = (name?: string) => {
@@ -361,8 +361,8 @@ const OwnerDashboard: React.FC = () => {
 
   const totalValueFormatted =
     totalValue > 0
-      ? `$${(totalValue / 1_000_000).toFixed(2)}M`
-      : "$0";
+      ? `₹${(totalValue / 1_000_000).toFixed(2)}M`
+      : "₹0";
 
   // Inquiry statistics
   const totalInquiries = inquiryList.length;
@@ -455,7 +455,7 @@ const OwnerDashboard: React.FC = () => {
 
   const secondaryStats: StatCardProps[] = [
     {
-      icon: <AttachMoney />,
+      icon: <IndianRupee />,
       label: "Portfolio Value",
       value: totalValueFormatted,
       subtitle: "Combined listed property value",
@@ -997,7 +997,7 @@ const OwnerDashboard: React.FC = () => {
                         color: "#b45309",
                       }}
                     >
-                      <AttachMoney />
+                      <IndianRupee />
                     </Avatar>
                   </ListItemAvatar>
 

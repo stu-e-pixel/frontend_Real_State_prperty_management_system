@@ -40,6 +40,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { logout } from "../../features/auth/authSlice";
 import { getMyFavorites } from "../../features/favorite/favoriteSlice";
 import type { UserRole } from "../../typescript/type/auth.types";
+import NotificationBell from "../notification/NotificationBell";
 
 // =====================================================
 // ROLE-BASED ROUTE HELPERS
@@ -330,6 +331,7 @@ const Navbar: React.FC = () => {
           ml: { md: "auto" },
         }}
       >
+        <NotificationBell />
         {/* FAVORITES */}
         {isCustomer && (
           <IconButton

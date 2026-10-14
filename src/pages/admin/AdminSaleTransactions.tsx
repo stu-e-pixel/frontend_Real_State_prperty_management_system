@@ -72,7 +72,7 @@ const PAYMENT_STATUS_COLORS: Record<
 };
 
 const formatCurrency = (amount: number): string =>
-  `$${(amount ?? 0).toLocaleString()}`;
+  `₹${(amount ?? 0).toLocaleString()}`;
 
 const formatStatus = (status: string): string =>
   status.replace(/_/g, " ");
