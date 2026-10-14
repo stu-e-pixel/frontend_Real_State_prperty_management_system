@@ -372,7 +372,7 @@ const NotificationBell: React.FC = () => {
                 size="small"
                 onClick={() => {
                   handleClose();
-                  navigate("/notifications");
+                  navigate("/user/notifications");
                 }}
                 sx={{ textTransform: "none", fontWeight: 600 }}
               >
